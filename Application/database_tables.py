@@ -57,5 +57,3 @@ tables_list = [
                                  """
     }
 ]
-
-insert_query = "INSERT INTO carpool_users(name, email, username, phone_number, bio, gender, password) VALUES (name, email, username, phone_number, bio, gender, password)"
