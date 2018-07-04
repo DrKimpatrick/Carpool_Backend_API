@@ -212,6 +212,39 @@ def requests_to_this_ride(current_user, ride_id):
     return result
 
 
+@app.route('/api/v1/user/rides/<request_id>/reaction', methods=['PUT'])
+@token_required
+def reaction_to_ride_request(current_user, request_id):
+    """ Driver accepts or rejects a ride request """
+
+    if not request.json or 'reaction' not in request.json:
+        return jsonify(
+            {
+                "message": "Input should be of type dictionary where key is 'reaction' and"
+                           " value 'reject' or 'accept' or 'pending' set back to default"
+            }
+        )
+
+    status = request.json['reaction']
+    # changing the status of a request
+    if status == 'reject':
+        status = 'rejected'
+    if status == 'accept':
+        status = 'accepted'
+    if status == 'pending':
+        status = 'pending'
+
+    if isinstance(request_id, int):
+        return jsonify(
+            {
+                "message": "Input should be integer"
+            }
+        )
+
+    result = database_connection.respond_to_request(current_user[0], request_id, status)
+    return result
+
+
 
 
 

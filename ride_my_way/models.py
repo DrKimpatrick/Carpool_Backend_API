@@ -264,7 +264,33 @@ class DatabaseConnection(object):
 
         return jsonify({"Ride requests": requests_list})
 
+    def respond_to_request(self, current_user, request_id, status):
+        """ Driver accepts or rejects a ride request in reaction to a request """
 
+        # check for the presence of that request id
+        sql = "SELECT ride_id FROM carpool_ride_request WHERE id={}".format(request_id)
+        self.cursor.execute(sql)
+
+        result = self.cursor.fetchall()
+        if not result:
+            return jsonify({"message": "No request with id ({})".format(request_id)})
+
+        # getting the ride_id to the ride where the request is made
+        # result is of length one
+        ride_id = result[0][-1]
+
+        # ensure that the current user actually created that ride
+        sql = "SELECT * FROM carpool_rides WHERE id={} AND driver_id={}".format(ride_id, current_user)
+        self.cursor.execute(sql)
+        result = self.cursor.fetchall()
+
+        if not result:
+            return jsonify({"message": "Sorry, you can only react to a ride request for the ride you created"})
+        sql = "UPDATE carpool_ride_request SET accepted='{}' WHERE id={}".format(status, request_id)
+
+        self.cursor.execute(sql)
+
+        return jsonify({"message": "Ride request successfully {}".format(status)})
 
 
 
