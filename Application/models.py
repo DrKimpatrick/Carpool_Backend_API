@@ -1,8 +1,14 @@
 import psycopg2
 from pprint import pprint
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from Application.database_tables import tables_list
+import jwt
+
+from datetime import datetime, timedelta
+
+JWT_SECRET = 'secret'
+JWT_ALGORITHM = 'HS256'
+JWT_EXP_DELTA_SECONDS = 5000
 
 
 class DatabaseConnection(object):
@@ -56,14 +62,19 @@ class DatabaseConnection(object):
             return str(err)
         return "Account successfully created"
 
-    def sign_in(self, email, password):
-        select_query = "SELECT email, password FROM carpool_users"
+    def sign_in(self, username, password):
+        select_query = "SELECT username, password, id FROM carpool_users"
         self.cursor.execute(select_query)
         result = self.cursor.fetchall()
 
         for user_info in result:
-            if user_info[0] == email and check_password_hash(user_info[1], password):
-                return "Your are logged in"
+            if user_info[0] == username and check_password_hash(user_info[1], password):
+                payload = {
+                    'id': user_info[2],
+                    'exp': datetime.utcnow() + timedelta(seconds=JWT_EXP_DELTA_SECONDS)
+                }
+                token = jwt.encode(payload, JWT_SECRET, JWT_ALGORITHM)
+                return token.decode('UTF-8')
 
         else:
             return "Email or password is incorrect"
@@ -90,6 +101,57 @@ class DatabaseConnection(object):
 
         return user_list
 
+    def create_ride(self, driver_id, origin, meet_point, contribution, free_spots, start_date, finish_date):
+        try:
+            sql = "INSERT INTO carpool_rides(driver_id, " \
+                                             "origin, " \
+                                             "meet_point, " \
+                                             "contribution, " \
+                                             "free_spots, start_date, " \
+                                             "finish_date) " \
+                                             "VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            self.cursor.execute(sql, (driver_id, origin, meet_point, contribution, free_spots, start_date, finish_date))
+        except psycopg2.Error as err:
+            return str(err)
+        return "Ride create successfully"
+
+    def get_rides(self):
+        sql = "SELECT origin, meet_point, contribution, free_spots, start_date, finish_date FROM carpool_rides"
+        self.cursor.execute(sql)
+        result = self.cursor.fetchall()
+
+        rides_list = []
+        for ride in result:
+
+            ride_info = {}
+            ride_info['origin'] = ride[0]
+            ride_info['meet_point'] = ride[1]
+            ride_info['contribution'] = ride[2]
+            ride_info['free_spots'] = ride[3]
+            ride_info['start_date'] = ride[4]
+            ride_info['finish_date'] = ride[5]
+
+            rides_list.append(ride_info)
+        return rides_list
+
+    def rides_given(self, driver_id):
+        """ Retrieves the rides given by the User (Driver)"""
+        sql = "SELECT origin, meet_point, contribution, free_spots, start_date, finish_date FROM carpool_rides WHERE driver_id=%s" % (driver_id)
+        self.cursor.execute(sql)
+        result = self.cursor.fetchall()
+
+        rides_list = []
+        for ride in result:
+            ride_info = {}
+            ride_info['origin'] = ride[0]
+            ride_info['meet_point'] = ride[1]
+            ride_info['contribution'] = ride[2]
+            ride_info['free_spots'] = ride[3]
+            ride_info['start_date'] = ride[4]
+            ride_info['finish_date'] = ride[5]
+
+            rides_list.append(ride_info)
+        return rides_list
 
 
 
