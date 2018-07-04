@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from Application.models import DatabaseConnection
+from ride_my_way.models import DatabaseConnection
 from functools import wraps
 import jwt
 

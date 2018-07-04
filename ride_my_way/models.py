@@ -1,7 +1,7 @@
 import psycopg2
 from pprint import pprint
 from werkzeug.security import generate_password_hash, check_password_hash
-from Application.database_tables import tables_list
+from ride_my_way.database_tables import tables_list
 import jwt
 from flask import jsonify
 
