@@ -3,17 +3,20 @@ from ride_my_way.models import DatabaseConnection
 from functools import wraps
 import jwt
 
-app = Flask(__name__)
+app = Flask(__name__)  # Initialising a flask application
 
+""" Variable for encoding and decoding web token """
 JWT_SECRET = 'secret'
 JWT_ALGORITHM = 'HS256'
 
-# creating an instance of the DatabaseConnections table
+"""creating an instance of the DatabaseConnections table
+   used o execute run methods in the models.py
+"""
 database_connection = DatabaseConnection()
 
 
 def token_required(f):
-    """ Restricts access to only users with the right token """
+    """ Restricts access to only logged in i.e users with the right token """
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
@@ -40,7 +43,9 @@ def token_required(f):
 
 @app.route('/api/v1/users/signup', methods=['POST'])
 def create_user():
-    """ Creating a user. users_list = [{"username":"", "name":""}]"""
+    """ Creating a user account
+        calls the signup() func in models.py
+    """
 
     if (not request.json or
             "name" not in request.json or
@@ -52,7 +57,7 @@ def create_user():
             "password" not in request.json):
 
         return jsonify(
-            {"error": "You have either missed out some info or used wrong keys"}
+            {"message": "You have either missed out some info or used wrong keys"}
         ), 400
 
     name = request.json["name"]
@@ -63,23 +68,27 @@ def create_user():
     gender = request.json['gender']
     password = request.json['password']
 
-    result = database_connection.signup(name, email, username, phone_number, bio, gender, password)
+    result = database_connection.signup(name,
+                                        email,
+                                        username,
+                                        phone_number,
+                                        bio, gender,
+                                        password)
 
-    return jsonify({"Users": result})
-
-    # result = database_connection.get_username("kim")
-    # return jsonify({"user": result})
+    return jsonify({"Result": result})
 
 
 @app.route('/api/v1/users/login', methods=['POST'])
 def login():
-    """ The function confirms the presence of user. It does not login the user """
+    """ The function confirms the presence of user.
+        It login s in the user by providing a web token
+    """
 
     if (not request.json or
             "username" not in request.json or
             "password" not in request.json):
         return jsonify(
-            {"error": "You have either missed out some info or used wrong keys"}
+            {"message": "You have either missed out some info or used wrong keys"}
         ), 400
 
     username = request.json['username']
@@ -114,7 +123,7 @@ def create_ride(current_user):
             "meet_point" not in request.json):
 
         return jsonify(
-            {"error": "You have either missed out some info or used wrong keys"}
+            {"message": "You have either missed out some info or used wrong keys"}
         ), 400
 
     origin = request.json['origin']
@@ -129,30 +138,35 @@ def create_ride(current_user):
     # Checking for errors
 
     if not isinstance(terms, str):
-        return jsonify({"error": "terms should be string"})
+        return jsonify({"message": "terms should be string"})
 
     if not isinstance(start_date, str):
-        return jsonify({"error": "Start date should be string"})
+        return jsonify({"message": "Start date should be string"})
 
     if not isinstance(finish_date, str):
-        return jsonify({"error": "Finish date should be string"})
+        return jsonify({"message": "Finish date should be string"})
 
     if not isinstance(free_spots, int):
-        return jsonify({"error": "Free spots should be integer"})
+        return jsonify({"message": "Free spots should be integer"})
 
     if not isinstance(origin, str):
-        return jsonify({"error": "Origin should be string"})
+        return jsonify({"message": "Origin should be string"})
 
     if not isinstance(destination, str):
-        return jsonify({"error": "Destination should be string"})
+        return jsonify({"message": "Destination should be string"})
 
     if not isinstance(meet_point, str):
-        return jsonify({"error": "meet_point should be string"})
+        return jsonify({"message": "meet_point should be string"})
 
     if not isinstance(contribution, (int, float, complex)):
-        return jsonify({"error": "ride_id should be integer"})
+        return jsonify({"message": "contribution should be integer"})
 
-    result = database_connection.create_ride(current_user[0], origin, meet_point, contribution, free_spots, start_date, finish_date)
+    result = database_connection.create_ride(current_user[0],
+                                             origin, meet_point,
+                                             contribution,
+                                             free_spots,
+                                             start_date,
+                                             finish_date)
     return jsonify({"message": result})
 
 
@@ -196,7 +210,7 @@ def request_for_ride(current_user, ride_id):
         ride_id = int(ride_id)
     except ValueError as exc:
         return jsonify(
-            {"error": "ride_id should be of type integer. {}".format(str(exc))}
+            {"message": "ride_id should be of type integer"}
         )
     result = database_connection.request_ride(current_user[0], ride_id)
     return result
@@ -207,7 +221,9 @@ def request_for_ride(current_user, ride_id):
 def requests_to_this_ride(current_user, ride_id):
     """ Retrieves all ride requests for that ride offer with id passed in """
     if isinstance(ride_id, int):
-        return jsonify({"message": "Input should be integer"})
+        return jsonify(
+            {"message": "Input should be integer"}
+        )
     result = database_connection.requests_to_this_ride(current_user[0], ride_id)
     return result
 
@@ -220,8 +236,9 @@ def reaction_to_ride_request(current_user, request_id):
     if not request.json or 'reaction' not in request.json:
         return jsonify(
             {
-                "message": "Input should be of type dictionary where key is 'reaction' and"
-                           " value 'reject' or 'accept' or 'pending' set back to default"
+                "message":
+                "Input should be of type dictionary where key is 'reaction' and"
+                " value 'reject' or 'accept' or 'pending' set back to default"
             }
         )
 
