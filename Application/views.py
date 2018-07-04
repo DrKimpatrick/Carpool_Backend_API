@@ -18,8 +18,8 @@ def token_required(f):
     def decorated(*args, **kwargs):
         token = None
 
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
+        if 'Authorization' in request.headers:
+            token = request.headers['Authorization']
 
         if not token:
             return jsonify({"message": "Token missing"})
@@ -32,7 +32,7 @@ def token_required(f):
             database_connection.cursor.execute(sql)
             current_user = database_connection.cursor.fetchone()
         except Exception as ex:
-            return jsonify({"message": "Token is invalid" + str(ex)})
+            return jsonify({"message": str(ex)})
 
         return f(current_user, *args, **kwargs)
     return decorated
@@ -172,7 +172,44 @@ def driver_rides(current_user):
     return jsonify({"{}'s ride offers".format(current_user[2]): result})
 
 
+@app.route('/api/v1/rides/<ride_id>', methods=['GET'])
+@token_required
+def get_single_ride(current_user, ride_id):
+    """ Retrieve a single ride by providing the ride_id """
+    try:
+        ride_id = int(ride_id)
+    except:
+        return jsonify({"message": "Input should be integer"})
 
+    if not isinstance(ride_id, int):
+        return jsonify({"message": "Input should integer"})
+    else:
+        result = database_connection.ride_details(ride_id)
+        return jsonify({"Result": result})
+
+
+@app.route('/api/v1/rides/<ride_id>/requests', methods=['POST'])
+@token_required
+def request_for_ride(current_user, ride_id):
+    """ Passenger can request for a ride by providing the ride_id"""
+    try:
+        ride_id = int(ride_id)
+    except ValueError as exc:
+        return jsonify(
+            {"error": "ride_id should be of type integer. {}".format(str(exc))}
+        )
+    result = database_connection.request_ride(current_user[0], ride_id)
+    return result
+
+
+@app.route('/api/v1/user/rides/<ride_id>/requests', methods=['GET'])
+@token_required
+def requests_to_this_ride(current_user, ride_id):
+    """ Retrieves all ride requests for that ride offer with id passed in """
+    if isinstance(ride_id, int):
+        return jsonify({"message": "Input should be integer"})
+    result = database_connection.requests_to_this_ride(current_user[0], ride_id)
+    return result
 
 
 

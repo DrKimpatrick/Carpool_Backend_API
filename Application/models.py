@@ -3,12 +3,13 @@ from pprint import pprint
 from werkzeug.security import generate_password_hash, check_password_hash
 from Application.database_tables import tables_list
 import jwt
+from flask import jsonify
 
 from datetime import datetime, timedelta
 
 JWT_SECRET = 'secret'
 JWT_ALGORITHM = 'HS256'
-JWT_EXP_DELTA_SECONDS = 5000
+JWT_EXP_DELTA_SECONDS = 9000
 
 
 class DatabaseConnection(object):
@@ -116,7 +117,7 @@ class DatabaseConnection(object):
         return "Ride create successfully"
 
     def get_rides(self):
-        sql = "SELECT origin, meet_point, contribution, free_spots, start_date, finish_date FROM carpool_rides"
+        sql = "SELECT origin, meet_point, contribution, free_spots, start_date, finish_date, id FROM carpool_rides"
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
 
@@ -130,13 +131,14 @@ class DatabaseConnection(object):
             ride_info['free_spots'] = ride[3]
             ride_info['start_date'] = ride[4]
             ride_info['finish_date'] = ride[5]
+            ride_info['ride_id'] = ride[6]
 
             rides_list.append(ride_info)
         return rides_list
 
     def rides_given(self, driver_id):
         """ Retrieves the rides given by the User (Driver)"""
-        sql = "SELECT origin, meet_point, contribution, free_spots, start_date, finish_date FROM carpool_rides WHERE driver_id=%s" % (driver_id)
+        sql = "SELECT origin, meet_point, contribution, free_spots, start_date, finish_date, id FROM carpool_rides WHERE driver_id=%s" % (driver_id)
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
 
@@ -149,9 +151,125 @@ class DatabaseConnection(object):
             ride_info['free_spots'] = ride[3]
             ride_info['start_date'] = ride[4]
             ride_info['finish_date'] = ride[5]
+            ride_info['ride_id'] = ride[6]
 
             rides_list.append(ride_info)
         return rides_list
+
+    """ Helps when relating the carpool_rides and carpool_users tables in the database """
+    def get_user_info(self, user_id):
+        """ Gets the username of the user with the user_id provided"""
+        sql = "SELECT username, phone_number, gender FROM carpool_users WHERE id=%s" % user_id
+        self.cursor.execute(sql)
+        result = self.cursor.fetchall()
+        for user_info in result:
+            username = user_info[0]
+            phone_number = user_info[1]
+            gender = user_info[2]
+            user = {}
+            user['username'] = username
+            user['gender'] = gender
+            user['phone number'] = phone_number
+        return user
+
+    def ride_details(self, ride_id):
+        sql = "SELECT origin, meet_point, contribution, free_spots, start_date, finish_date, driver_id FROM carpool_rides WHERE id=%s" % (ride_id)
+        self.cursor.execute(sql)
+        result = self.cursor.fetchall()
+        print(result)
+        if not result:
+            return "The ride offer with ride_id {} does not exist".format(ride_id)
+
+        ride_info = {}
+        for info in result:
+            # driver information to be returned with rides details
+            driver_id = info[6]
+            driver_info = self.get_user_info(driver_id)
+            ride_info['Driver details'] = driver_info
+
+            ride_info['origin'] = info[0]
+            ride_info['meet_point'] = info[1]
+            ride_info['contribution'] = info[2]
+            ride_info['free_spots'] = info[3]
+            ride_info['start_date'] = info[4]
+            ride_info['finish_date'] = info[5]
+
+        return ride_info
+
+    def request_ride(self, current_user, ride_id):
+        """ Post a request for a ride by providing the ride id"""
+
+        # ensure that user does not make more requests to the same ride
+        try:
+            sql = "SELECT ride_id, passenger_id FROM carpool_ride_request"
+            self.cursor.execute(sql)
+            result = self.cursor.fetchall()
+            for request_info in result:
+                if request_info[0] == ride_id and request_info[1] == current_user:
+                    return jsonify({"message": "You already made a request to that ride"})
+        except psycopg2.Error as err:
+            return jsonify({"error": str(err)})
+
+        # Now make a request to a ride offer
+        try:
+            sql = "INSERT INTO carpool_ride_request(ride_id, passenger_id) VALUES(%s, %s)"
+            self.cursor.execute(sql, (ride_id, current_user))
+        except psycopg2.Error as err:
+            return jsonify({"error": str(err)})
+        return jsonify({"message": "Your request has been successfully sent and pending approval"})
+
+    def all_requests(self):
+        """ Retrieves all ride requests"""
+        sql = "SELECT * FROM carpool_ride_request"
+        self.cursor.execute(sql)
+        result = self.cursor.fetchall()
+        return result
+
+    def requests_to_this_ride(self, current_user, ride_id):
+        """ Retrieves all ride requests for that ride offer """
+
+        try:
+            """check for the presence of that ride id"""
+            sql = "SELECT * FROM carpool_rides WHERE id={} AND driver_id={}".format(ride_id, current_user)
+            self.cursor.execute(sql)
+            result = self.cursor.fetchall()
+        except psycopg2.Error as err:
+            return jsonify({"message": str(err)})
+        if not result:
+            return jsonify({"message": "You don't have a ride with ride_id ({}), recheck the info and try again".format(ride_id)})
+
+        try:
+            """ fetching data from the ride requests table where that ride_id is"""
+            sql = "SELECT id, passenger_id, accepted FROM  carpool_ride_request WHERE ride_id=%s" % ride_id
+            self.cursor.execute(sql)
+            result = self.cursor.fetchall()
+        except psycopg2.Error as err:
+            return jsonify({"message": str(err)})
+
+        if not result:
+            return jsonify({"message": "No requests made to ride with ride_id ({})".format(ride_id)})
+
+        # list of requests to the ride
+        requests_list = []
+        for r_request in result:
+            request_info = {}
+            request_info['request id'] = r_request[0]
+            request_info['request status'] = r_request[2]
+
+            # getting the passenger information
+            passenger_id = r_request[1]
+            passenger_info = self.get_user_info(passenger_id)
+            request_info['passenger details'] = passenger_info
+            requests_list.append(request_info)
+
+        return jsonify({"Ride requests": requests_list})
+
+
+
+
+
+
+
 
 
 

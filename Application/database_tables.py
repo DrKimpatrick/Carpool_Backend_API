@@ -1,10 +1,3 @@
-"""{"name":"kimanje patrick 3", "email": "dr.kimpatrick@gmail.com", "username": "patrick_8000",
-"phone_number": 888, "bio": "this is kim", "gender": "Male", "password": "Kp15712Kp"
-}
-{"origin": "kampala", "destination": "Masaka", "meetpoint": "Ndeeba", "contribution": 5000,
-        "free_spots": 4, "start_date": "21st/06/2018", "finish_date": "1st/06/2018", "terms":"terms", "rideId": 1000
-    }"""
-
 tables_list = [
     {
         "carpool_users": """
@@ -52,7 +45,7 @@ tables_list = [
                                  
                                  passenger_id INTEGER NOT NULL ,
                                  FOREIGN KEY(passenger_id) REFERENCES carpool_users(id) ON DELETE CASCADE ,
-                                 accepted BOOLEAN DEFAULT FALSE ) 
+                                 accepted VARCHAR DEFAULT 'pending' ) 
                                  
                                  """
     }
