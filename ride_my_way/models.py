@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from ride_my_way.database_tables import tables_list  # has the sql for table creation
 import jwt
 from flask import jsonify
+import os
 
 from datetime import datetime, timedelta
 
@@ -22,11 +23,17 @@ class DatabaseConnection(object):
     The methods are called from the views.py file
 
     """
+
     def __init__(self):
         """ Initialising a database connection """
+        if os.getenv('APP_SETTINGS') == "'testing'":
+            self.dbname = "test_db"
+        else:
+            self.dbname = "Ride_my_way_2"
+
         try:
             # establishing a server connection
-            self.connection = psycopg2.connect(dbname="Ride_my_way_2",
+            self.connection = psycopg2.connect(dbname="{}".format(self.dbname),
                                                user="postgres",
                                                password="Kp15712Kp",
                                                host="localhost"
@@ -60,11 +67,11 @@ class DatabaseConnection(object):
         row = self.cursor.fetchall()
         for result in row:
             if result[0] == username:
-                return "Username already taken, try another"
+                return jsonify({"message": "Username already taken, try another"})
             if result[1] == email:
-                return "User account with that email already exists"
+                return jsonify({"message": "User account with that email already exists"})
             if result[2] == phone_number:
-                return "User account with that phone number already exists"
+                return jsonify({"message": "User account with that phone number already exists"})
 
     def signup(self,
                name,
@@ -92,9 +99,9 @@ class DatabaseConnection(object):
                                 (name, email, username, phone_number,
                                  bio, gender, hashed_password)
                                 )
-        except psycopg2.Error as err:
-            return str(err)
-        return "Account successfully created"
+        except Exception as err:
+            return jsonify({"message": "Username, email or phone_number already used "})
+        return jsonify({"message": "Account successfully created"})
 
     def sign_in(self, username, password):
         """ A sign a web token to current user if username and password match """
@@ -276,7 +283,7 @@ class DatabaseConnection(object):
                         {"message": "You already made a request to that ride"}
                     )
         except psycopg2.Error as err:
-            return jsonify({"error": str(err)})
+            return jsonify({"message": str(err)})
 
         # Now make a request to a ride offer
         try:

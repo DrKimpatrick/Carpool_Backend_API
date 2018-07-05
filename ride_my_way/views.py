@@ -75,7 +75,7 @@ def create_user():
                                         bio, gender,
                                         password)
 
-    return jsonify({"Result": result})
+    return result
 
 
 @app.route('/api/v1/auth/login', methods=['POST'])

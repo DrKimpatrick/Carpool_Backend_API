@@ -1,0 +1,4 @@
+[
+  "tests/test_api.py::TestRideMyWay::test_create_user_1",
+  "tests/test_api.py::TestRideMyWay::test_create_user_2"
+]
