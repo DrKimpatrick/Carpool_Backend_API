@@ -2,6 +2,7 @@ from ride_my_way import views
 import unittest
 import json
 
+
 BASE_URL = '/api/v1/'
 content_type = 'application/json'
 
@@ -21,6 +22,10 @@ class TestRideMyWay(unittest.TestCase):
     def setUp(self):
         # views.app.config['TESTING'] = True
         self.app = views.app.test_client()
+        self.cur = views.database_connection
+        views.database_connection.create_tables()
+
+
         # self.app.testing = True
 
         # --------***** Creating users ********------------------
@@ -106,28 +111,51 @@ class TestRideMyWay(unittest.TestCase):
                          "finish_date": "1st/06/2018",
                          "terms": "terms"}
 
-    def tearDown(self):
-        pass
-
     def test_create_user_1(self):
         # Creating a user instance, length is one
         response = self.app.post("{}auth/signup".format(BASE_URL),
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
+
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json, {"message": "Account successfully created"})
+        self.assertEqual(response.json,
+                         {"message": "Account successfully created"})
 
-    def test_create_user_2(self):
-        """ Has the same username with the created user above """
-
-        # Username is unique, therefore an error message is raised here
+        # Creating another user with the same username, email and password
         response = self.app.post("{}auth/signup".format(BASE_URL),
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
-        # self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json,
-                         {"message": "Username already taken, try another"}
-                         )
-        self.assertEqual(response.json['message'],
-                         "Username already taken, try another"
-                         )
+                         {'message': 'Username already taken, try another'})
+
+    def test_create_user_3(self):
+        """ Second user instance | all expected to work fine """
+        response_2 = self.app.post("{}auth/signup".format(BASE_URL),
+                                   data=json.dumps(self.user_2),
+                                   content_type=content_type)
+        self.assertEqual(response_2.status_code, 200)
+        self.assertEqual(response_2.json,
+                         {"message": "Account successfully created"})  # length=2
+
+    def test_create_user_4(self):
+        """ Wrong and missing user fields | Should raise and error message """
+        response_3 = self.app.post("{}auth/signup".format(BASE_URL),
+                                   data=json.dumps(self.user_3),
+                                   content_type=content_type)
+
+        self.assertEqual(response_3.status_code, 400)
+        self.assertEqual(response_3.json,
+                         {"message": "You have either missed out some info or used wrong keys"})
+
+    def tearDown(self):
+        sql_requests = "DROP TABLE IF EXISTS carpool_ride_request"
+        sql_ride = "DROP TABLE IF EXISTS carpool_rides"
+        sql = "DROP TABLE IF EXISTS carpool_users"
+
+        sql_list = [sql_requests, sql_ride, sql]
+        for sql in sql_list:
+            self.cur.cursor.execute(sql)
+
+
+
+

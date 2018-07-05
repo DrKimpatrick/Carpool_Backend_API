@@ -45,6 +45,7 @@ class DatabaseConnection(object):
         except psycopg2.Error as err:
             # bug in returning under the __init__
             pprint("Can not establish a database connection")
+            print("Can not establish a database connection")
 
     def create_tables(self):
         """ Create database tables from the database_tables.py file """
@@ -84,8 +85,8 @@ class DatabaseConnection(object):
                ):
 
         # Check if username, email and phone_number don't exist
-        # if self.should_be_unique(username, email, phone_number):
-            # return self.should_be_unique(username, email, phone_number)
+        if self.should_be_unique(username, email, phone_number):
+            return self.should_be_unique(username, email, phone_number)
 
         # hashing the password
         hashed_password = generate_password_hash(password, method="sha256")
@@ -203,12 +204,14 @@ class DatabaseConnection(object):
 
     def rides_given(self, driver_id):
         """ Returns a list of rides given by the User(Driver)"""
-
-        sql = "SELECT origin, meet_point, contribution, free_spots, " \
-              "start_date, finish_date, id FROM carpool_rides WHERE " \
-              "driver_id=%s" % driver_id
-        self.cursor.execute(sql)
-        result = self.cursor.fetchall()
+        try:
+            sql = "SELECT origin, meet_point, contribution, free_spots, " \
+                  "start_date, finish_date, id FROM carpool_rides WHERE " \
+                  "driver_id=%s" % driver_id
+            self.cursor.execute(sql)
+            result = self.cursor.fetchall()
+        except:
+            return jsonify({"message": "Some thing went wrong"})
 
         rides_list = []
         for ride in result:
