@@ -84,8 +84,8 @@ class DatabaseConnection(object):
                ):
 
         # Check if username, email and phone_number don't exist
-        if self.should_be_unique(username, email, phone_number):
-            return self.should_be_unique(username, email, phone_number)
+        # if self.should_be_unique(username, email, phone_number):
+            # return self.should_be_unique(username, email, phone_number)
 
         # hashing the password
         hashed_password = generate_password_hash(password, method="sha256")
