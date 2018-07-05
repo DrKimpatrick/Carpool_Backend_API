@@ -1,0 +1,5 @@
+[run]
+source=
+    ./ride_my_way
+omit=
+    ./venv/*
