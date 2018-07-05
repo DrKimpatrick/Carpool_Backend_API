@@ -2,7 +2,6 @@ from ride_my_way import views
 import unittest
 import json
 
-
 BASE_URL = '/api/v1/'
 content_type = 'application/json'
 
@@ -24,9 +23,6 @@ class TestRideMyWay(unittest.TestCase):
         self.app = views.app.test_client()
         self.cur = views.database_connection
         views.database_connection.create_tables()
-
-
-        # self.app.testing = True
 
         # --------***** Creating users ********------------------
 
@@ -188,6 +184,41 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.login_user_1),
                                  content_type=content_type)
         self.assertEqual(response.status_code, 200)
+
+    def test_create_ride(self):
+        """ Lets create a ride offer here, first create account login and create ride """
+
+        # Creating a user instance, length is one
+        response = self.app.post("{}auth/signup".format(BASE_URL),
+                                 data=json.dumps(self.user_1),
+                                 content_type=content_type)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json,
+                         {"message": "Account successfully created"})
+
+        # logging the user in
+        response = self.app.post("{}auth/login".format(BASE_URL),
+                                 data=json.dumps(self.login_user_1),
+                                 content_type=content_type)
+        self.assertEqual(response.status_code, 200)
+
+        # capturing the token
+        self.token = response.json['message']
+
+        # supply right information
+        response = self.app.post('{}users/rides'.format(BASE_URL),
+                                 data=json.dumps(self.ride_1),
+                                 headers={'Authorization': self.token}, content_type=content_type)
+        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.json, {"message": "Ride create successfully"})
+
+        # supply information with wrong keys and missing parameters
+        response = self.app.post('{}users/rides'.format(BASE_URL),
+                                 data=json.dumps(self.ride_400),
+                                 headers={'Authorization': self.token}, content_type=content_type)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {'message': 'You have either missed out some info or used wrong keys'} )
 
     def tearDown(self):
         sql_requests = "DROP TABLE IF EXISTS carpool_ride_request"
