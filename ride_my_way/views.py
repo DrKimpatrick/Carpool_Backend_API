@@ -41,7 +41,7 @@ def token_required(f):
     return decorated
 
 
-@app.route('/api/v1/users/signup', methods=['POST'])
+@app.route('/api/v1/auth/signup', methods=['POST'])
 def create_user():
     """ Creating a user account
         calls the signup() func in models.py
@@ -78,7 +78,7 @@ def create_user():
     return jsonify({"Result": result})
 
 
-@app.route('/api/v1/users/login', methods=['POST'])
+@app.route('/api/v1/auth/login', methods=['POST'])
 def login():
     """ The function confirms the presence of user.
         It login s in the user by providing a web token
@@ -107,7 +107,7 @@ def list_of_users(current_user):
     return jsonify({"Users": result})
 
 
-@app.route('/api/v1/rides', methods=['POST'])
+@app.route('/api/v1/users/rides', methods=['POST'])
 @token_required
 def create_ride(current_user):
     """ Creating a ride offer """
@@ -178,7 +178,7 @@ def available_ride(current_user):
     return jsonify({"Rides": result})
 
 
-@app.route('/api/v1/user/rides', methods=['GET'])
+@app.route('/api/v1/this/user/rides', methods=['GET'])
 @token_required
 def driver_rides(current_user):
     """ Retrieves all the available ride offers """
@@ -216,7 +216,7 @@ def request_for_ride(current_user, ride_id):
     return result
 
 
-@app.route('/api/v1/user/rides/<ride_id>/requests', methods=['GET'])
+@app.route('/api/v1/users/rides/<ride_id>/requests', methods=['GET'])
 @token_required
 def requests_to_this_ride(current_user, ride_id):
     """ Retrieves all ride requests for that ride offer with id passed in """
@@ -228,7 +228,7 @@ def requests_to_this_ride(current_user, ride_id):
     return result
 
 
-@app.route('/api/v1/user/rides/<request_id>/reaction', methods=['PUT'])
+@app.route('/api/v1/users/rides/<request_id>/reaction', methods=['PUT'])
 @token_required
 def reaction_to_ride_request(current_user, request_id):
     """ Driver accepts or rejects a ride request """
