@@ -147,6 +147,48 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response_3.json,
                          {"message": "You have either missed out some info or used wrong keys"})
 
+    def test_login_1(self):
+        # ---- for bad request ---------------------------
+        response_400 = self.app.post("{}auth/login".format(BASE_URL),
+                                     data=json.dumps(self.login_user_400),
+                                     content_type=content_type)
+        self.assertEqual(response_400.status_code, 400)
+
+    def test_login_2(self):
+        """ Right data """
+        response_1 = self.app.post("{}auth/login".format(BASE_URL),
+                                   data=json.dumps(self.login_user_1),
+                                   content_type=content_type)
+
+        self.assertEqual(response_1.status_code, 200)
+        self.assertEqual(response_1.json, {'message': 'Email or password is incorrect'})
+
+        # let create an account here
+        # Creating a user instance, length is one
+        response = self.app.post("{}auth/signup".format(BASE_URL),
+                                 data=json.dumps(self.user_1),
+                                 content_type=content_type)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json,
+                         {"message": "Account successfully created"})
+
+    def test_login_3(self):
+        """ Lets creates a user and then login expect a success """
+        # Creating a user instance, length is one
+        response = self.app.post("{}auth/signup".format(BASE_URL),
+                                 data=json.dumps(self.user_1),
+                                 content_type=content_type)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json,
+                         {"message": "Account successfully created"})
+
+        response = self.app.post("{}auth/login".format(BASE_URL),
+                                 data=json.dumps(self.login_user_1),
+                                 content_type=content_type)
+        self.assertEqual(response.status_code, 200)
+
     def tearDown(self):
         sql_requests = "DROP TABLE IF EXISTS carpool_ride_request"
         sql_ride = "DROP TABLE IF EXISTS carpool_rides"
