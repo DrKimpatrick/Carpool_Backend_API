@@ -27,13 +27,15 @@ and agrees to all the conditions specified (price and general behavior).
     - Get rides for the current user
 **API end points**
 
-- POST api/v1/auth/signup 
-- POST api/v1/auth/login 
-- GET api/v1/rides 
-- GET api/v1/rides/#
-- POST api/v1/rides/#/requests
-- POST api/v1/users/rides
-- GET api/v1/users/rides/#/requests
+- POST api/v1/auth/signup (create account) 
+- POST api/v1/auth/login (login user)
+- GET api/v1/users/rides (Create ride offer)
+- GET api/v1/rides (get all rides)
+- GET api/v1/users/rides/#/requests (view a list of ride requests to the ride)
+- GET api/v1/this/user/rides (rides given)
+- PUT api/v1/users/rides/5/reaction (reject or accept request)
+- POST api/v1/rides/#/requests (Make ride request)
+- GET api/v1/users (List all application users)
 
 **Getting Started**
 
@@ -44,15 +46,15 @@ These instructions will enable you to run the project on your local machine.
 Below are the things you need to get the project up and running.
 
 - git : To update and clone the repository
-- python2.7 or python3: Language used to develop the api
+- python3: Language used to develop the api
 - pip: A python package used to install project requirements specified in the requirements text file.
 
 **Installing the project**
 
 Type: 
         
-        "git clone https://"
-   in the terminal or git bash or command prompt.
+       "https://github.com/DrKimpatrick/Andela_bootcamp_week_2.git"
+  in the terminal or git bash or command prompt.
 
 To install the requirements. run:
 
