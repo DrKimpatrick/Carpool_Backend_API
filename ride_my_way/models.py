@@ -200,7 +200,7 @@ class DatabaseConnection(object):
             ride_info['ride_id'] = ride[6]
 
             rides_list.append(ride_info)
-        return rides_list
+        return jsonify({"Rides": rides_list})
 
     def rides_given(self, driver_id):
         """ Returns a list of rides given by the User(Driver)"""
@@ -254,7 +254,7 @@ class DatabaseConnection(object):
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
         if not result:
-            return "The ride offer with ride_id {} does not exist".format(ride_id)
+            return jsonify({"message": "The ride offer with ride_id {} does not exist".format(ride_id)})
 
         ride_info = {}
         for info in result:
@@ -270,7 +270,7 @@ class DatabaseConnection(object):
             ride_info['start_date'] = info[4]
             ride_info['finish_date'] = info[5]
 
-        return ride_info
+        return jsonify({"Ride details": ride_info})
 
     def request_ride(self, current_user, ride_id):
         """ Post a request for a ride by providing the ride id"""
@@ -294,7 +294,7 @@ class DatabaseConnection(object):
                   " VALUES(%s, %s)"
             self.cursor.execute(sql, (ride_id, current_user))
         except psycopg2.Error as err:
-            return jsonify({"error": str(err)})
+            return jsonify({"message": "Ride_id ({}) does not exist".format(ride_id)})
         return jsonify(
             {"message":
              "Your request has been successfully sent and pending approval"}

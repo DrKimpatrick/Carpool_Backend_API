@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from ride_my_way.models import DatabaseConnection
 from functools import wraps
 import jwt
+import datetime
 
 app = Flask(__name__)  # Initialising a flask application
 
@@ -175,7 +176,7 @@ def create_ride(current_user):
 def available_ride(current_user):
     """ Retrieves all the available ride offers """
     result = database_connection.get_rides()
-    return jsonify({"Rides": result})
+    return result
 
 
 @app.route('/api/v1/this/user/rides', methods=['GET'])
@@ -199,7 +200,7 @@ def get_single_ride(current_user, ride_id):
         return jsonify({"message": "Input should integer"})
     else:
         result = database_connection.ride_details(ride_id)
-        return jsonify({"Result": result})
+        return result
 
 
 @app.route('/api/v1/rides/<ride_id>/requests', methods=['POST'])
