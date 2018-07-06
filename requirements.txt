@@ -1,0 +1,15 @@
+asn1crypto==0.24.0
+cffi==1.11.5
+click==6.7
+cryptography==2.2.2
+Flask==1.0.2
+idna==2.7
+itsdangerous==0.24
+Jinja2==2.10
+jwt==0.5.4
+MarkupSafe==1.0
+psycopg2==2.7.5
+pycparser==2.18
+PyJWT==1.6.4
+six==1.11.0
+Werkzeug==0.14.1
