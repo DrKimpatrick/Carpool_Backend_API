@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/DrKimpatrick/Andela_bootcamp_week_2.svg?branch=master)](https://travis-ci.org/DrKimpatrick/Andela_bootcamp_week_2)
+
 # Ride-my-way (Carpool Andela Bootcamp 09 Project)
 
 Ride-my-way App is a carpooling application that provides drivers with the ability to create ride oﬀers  and passengers to join available ride oﬀers.
