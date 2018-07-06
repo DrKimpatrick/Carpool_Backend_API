@@ -26,7 +26,7 @@ class DatabaseConnection(object):
 
     def __init__(self):
         """ Initialising a database connection """
-        if os.getenv('APP_SETTINGS') == "'testing'":
+        if os.getenv('APP_SETTINGS') == "testing":
             self.dbname = "test_db"
         else:
             self.dbname = "Ride_my_way_2"
