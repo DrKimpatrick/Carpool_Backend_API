@@ -1,0 +1,16 @@
+language: python
+python:
+    - "3.6.3"
+before_script:
+
+before_install:
+    - pip install -r requirements.txt
+
+before_script:
+  
+script:
+    - coverage run -m pytest
+    - coverage report
+    
+after_success:
+    - coveralls
