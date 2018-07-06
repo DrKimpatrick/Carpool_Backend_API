@@ -8,14 +8,12 @@ env:
   global:
     - APP_SETTINGS=testing
 
-before_script:
-  - "psql -C 'create database test_db:' -U postgres"
-
-before_install:
+install:
     - pip install -r requirements.txt
 
 before_script:
-  
+  - "psql -C 'create database test_db:' -U postgres"
+
 script:
     - coverage run -m pytest
     - coverage report
