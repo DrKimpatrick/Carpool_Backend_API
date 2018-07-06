@@ -47,12 +47,35 @@ class DatabaseConnection(object):
             pprint("Can not establish a database connection")
             print("Can not establish a database connection")
 
+    def db_connection(self):
+        if os.getenv('APP_SETTINGS') == "testing":
+            self.dbname = "test_db"
+        else:
+            self.dbname = "Ride_my_way_2"
+
+        try:
+            # establishing a server connection
+            self.connection = psycopg2.connect(dbname="{}".format(self.dbname),
+                                               user="postgres",
+                                               password="Kp15712Kp",
+                                               host="localhost"
+                                               )
+            self.connection.autocommit = True
+
+            # activate connection cursor
+            self.cursor = self.connection.cursor()
+            return self.cursor
+        except psycopg2.Error as err:
+            # bug in returning under the __init__
+            pprint("Can not establish a database connection")
+            print("Can not establish a database connection")
+
     def create_tables(self):
         """ Create database tables from the database_tables.py file """
-
+        cursor = self.db_connection()
         for table_info in tables_list:
             for table_name in table_info:
-                self.cursor.execute(table_info[table_name])
+                cursor.execute(table_info[table_name])
 
     def should_be_unique(self,
                          username,
