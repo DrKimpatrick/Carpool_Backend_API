@@ -24,8 +24,8 @@ class DatabaseConnection(object):
 
     """
 
-    def __init__(self):
-        """ Initialising a database connection """
+    """    def __init__(self):
+        """  """Initialising a database connection
         if os.getenv('APP_SETTINGS') == "testing":
             self.dbname = "test_db"
         else:
@@ -46,7 +46,7 @@ class DatabaseConnection(object):
             # bug in returning under the __init__
             pprint("Can not establish a database connection")
             print("Can not establish a database connection")
-
+"""
     def db_connection(self):
         if os.getenv('APP_SETTINGS') == "testing":
             self.dbname = "test_db"
@@ -70,6 +70,8 @@ class DatabaseConnection(object):
             pprint("Can not establish a database connection")
             print("Can not establish a database connection")
 
+    # holding a cursor object
+
     def create_tables(self):
         """ Create database tables from the database_tables.py file """
         cursor = self.db_connection()
@@ -85,10 +87,10 @@ class DatabaseConnection(object):
         """ Is a helper function that is called by other functions
             to ensure username and phone_number are unique
         """
-
+        cursor = self.db_connection()
         select_query = "SELECT username, email, phone_number FROM carpool_users"
-        self.cursor.execute(select_query)
-        row = self.cursor.fetchall()
+        cursor.execute(select_query)
+        row = cursor.fetchall()
         for result in row:
             if result[0] == username:
                 return jsonify({"message": "Username already taken, try another"})
@@ -106,7 +108,7 @@ class DatabaseConnection(object):
                gender,
                password
                ):
-
+        cursor = self.db_connection()
         # Check if username, email and phone_number don't exist
         if self.should_be_unique(username, email, phone_number):
             return self.should_be_unique(username, email, phone_number)
@@ -119,7 +121,7 @@ class DatabaseConnection(object):
             sql = "INSERT INTO carpool_users(name, email, username, " \
                   "phone_number, bio, gender, password) " \
                   "VALUES (%s, %s, %s, %s, %s, %s, %s)"
-            self.cursor.execute(sql,
+            cursor.execute(sql,
                                 (name, email, username, phone_number,
                                  bio, gender, hashed_password)
                                 )
@@ -129,11 +131,11 @@ class DatabaseConnection(object):
 
     def sign_in(self, username, password):
         """ A sign a web token to current user if username and password match """
-
+        cursor = self.db_connection()
         # query the user table for the username and password
         select_query = "SELECT username, password, id FROM carpool_users"
-        self.cursor.execute(select_query)
-        result = self.cursor.fetchall()
+        cursor.execute(select_query)
+        result = cursor.fetchall()
 
         # assigning a web token if info right
         for user_info in result:
@@ -150,11 +152,12 @@ class DatabaseConnection(object):
 
     def get_all_users(self):
         """ Returns a list of all users in the database """
+        cursor = self.db_connection()
 
         select_query = "SELECT name, username, email, phone_number, " \
                        "bio, gender FROM carpool_users"
-        self.cursor.execute(select_query)
-        results = self.cursor.fetchall()
+        cursor.execute(select_query)
+        results = cursor.fetchall()
 
         user_list = []
 
@@ -185,6 +188,7 @@ class DatabaseConnection(object):
             the current_user instance in the token_required()
             decorator as id
         """
+        cursor = self.db_connection()
         try:
             sql = "INSERT INTO carpool_rides(driver_id, " \
                                              "origin, " \
@@ -193,7 +197,7 @@ class DatabaseConnection(object):
                                              "free_spots, start_date, " \
                                              "finish_date) " \
                                              "VALUES (%s, %s, %s, %s, %s, %s, %s)"
-            self.cursor.execute(
+            cursor.execute(
                                 sql,
                                 (driver_id, origin, meet_point, contribution,
                                  free_spots, start_date, finish_date)
@@ -204,11 +208,12 @@ class DatabaseConnection(object):
 
     def get_rides(self):
         """ Returns a list of all ride offers available """
+        cursor = self.db_connection()
 
         sql = "SELECT origin, meet_point, contribution, free_spots, " \
               "start_date, finish_date, id FROM carpool_rides"
-        self.cursor.execute(sql)
-        result = self.cursor.fetchall()
+        cursor.execute(sql)
+        result = cursor.fetchall()
 
         rides_list = []
         for ride in result:
@@ -227,12 +232,13 @@ class DatabaseConnection(object):
 
     def rides_given(self, driver_id):
         """ Returns a list of rides given by the User(Driver)"""
+        cursor = self.db_connection()
         try:
             sql = "SELECT origin, meet_point, contribution, free_spots, " \
                   "start_date, finish_date, id FROM carpool_rides WHERE " \
                   "driver_id=%s" % driver_id
-            self.cursor.execute(sql)
-            result = self.cursor.fetchall()
+            cursor.execute(sql)
+            result = cursor.fetchall()
         except:
             return jsonify({"message": "Some thing went wrong"})
 
@@ -252,12 +258,13 @@ class DatabaseConnection(object):
 
     def get_user_info(self, user_id):
         """ Gets the info of the user with the user_id provided"""
+        cursor = self.db_connection()
 
         sql = "SELECT username, phone_number, gender " \
               "FROM carpool_users WHERE id=%s" % user_id
 
-        self.cursor.execute(sql)
-        result = self.cursor.fetchall()
+        cursor.execute(sql)
+        result = cursor.fetchall()
 
         user = {}  # holds user information
         for user_info in result:
@@ -270,12 +277,13 @@ class DatabaseConnection(object):
         """ Returns the details of a ride offer with the ride_id provided
             Also contains the driver information
         """
+        cursor = self.db_connection()
 
         sql = "SELECT origin, meet_point, contribution, free_spots, start_date, " \
               "finish_date, driver_id FROM carpool_rides WHERE id=%s" % ride_id
 
-        self.cursor.execute(sql)
-        result = self.cursor.fetchall()
+        cursor.execute(sql)
+        result = cursor.fetchall()
         if not result:
             return jsonify({"message": "The ride offer with ride_id {} does not exist".format(ride_id)})
 
@@ -297,12 +305,13 @@ class DatabaseConnection(object):
 
     def request_ride(self, current_user, ride_id):
         """ Post a request for a ride by providing the ride id"""
+        cursor = self.db_connection()
 
         # ensure that user does not make more requests to the same ride
         try:
             sql = "SELECT ride_id, passenger_id FROM carpool_ride_request"
-            self.cursor.execute(sql)
-            result = self.cursor.fetchall()
+            cursor.execute(sql)
+            result = cursor.fetchall()
             for request_info in result:
                 if request_info[0] == ride_id and request_info[1] == current_user:
                     return jsonify(
@@ -315,7 +324,7 @@ class DatabaseConnection(object):
         try:
             sql = "INSERT INTO carpool_ride_request(ride_id, passenger_id)" \
                   " VALUES(%s, %s)"
-            self.cursor.execute(sql, (ride_id, current_user))
+            cursor.execute(sql, (ride_id, current_user))
         except psycopg2.Error as err:
             return jsonify({"message": "Ride_id ({}) does not exist".format(ride_id)})
         return jsonify(
@@ -325,9 +334,11 @@ class DatabaseConnection(object):
 
     def all_requests(self):
         """ Retrieves all ride requests"""
+        cursor = self.db_connection()
+
         sql = "SELECT * FROM carpool_ride_request"
-        self.cursor.execute(sql)
-        result = self.cursor.fetchall()
+        cursor.execute(sql)
+        result = cursor.fetchall()
         return result
 
     def requests_to_this_ride(self,
@@ -337,13 +348,14 @@ class DatabaseConnection(object):
         """ Retrieves all ride requests for that ride offer
             Only if the current user is the author of the ride offer
         """
+        cursor = self.db_connection()
 
         try:
             # check for the presence of that ride id
             sql = "SELECT * FROM carpool_rides WHERE id={} AND driver_id={}"\
                 .format(ride_id, current_user)
-            self.cursor.execute(sql)
-            result = self.cursor.fetchall()
+            cursor.execute(sql)
+            result = cursor.fetchall()
         except psycopg2.Error as err:
             return jsonify({"message": str(err)})
 
@@ -358,8 +370,8 @@ class DatabaseConnection(object):
             # fetching data from the ride requests table where ride_id is
             sql = "SELECT id, passenger_id, accepted FROM  " \
                   "carpool_ride_request WHERE ride_id=%s" % ride_id
-            self.cursor.execute(sql)
-            result = self.cursor.fetchall()
+            cursor.execute(sql)
+            result = cursor.fetchall()
         except psycopg2.Error as err:
             return jsonify({"message": str(err)})
 
@@ -389,13 +401,14 @@ class DatabaseConnection(object):
                            status
                            ):
         """ Driver accepts or rejects a ride request in reaction to a request """
+        cursor = self.db_connection()
 
         # check for the presence of that request id
         sql = "SELECT ride_id FROM carpool_ride_request WHERE id={}"\
               .format(request_id)
-        self.cursor.execute(sql)
+        cursor.execute(sql)
 
-        result = self.cursor.fetchall()
+        result = cursor.fetchall()
         if not result:
             return jsonify(
                 {
@@ -411,8 +424,8 @@ class DatabaseConnection(object):
         sql = "SELECT * FROM carpool_rides WHERE id={} AND driver_id={}"\
               .format(ride_id, current_user)
 
-        self.cursor.execute(sql)
-        result = self.cursor.fetchall()
+        cursor.execute(sql)
+        result = cursor.fetchall()
 
         if not result:
             return jsonify(
@@ -424,7 +437,7 @@ class DatabaseConnection(object):
         sql = "UPDATE carpool_ride_request SET accepted='{}' WHERE id={}"\
               .format(status, request_id)
 
-        self.cursor.execute(sql)
+        cursor.execute(sql)
 
         return jsonify({"message": "Ride request successfully {}".format(status)})
 
