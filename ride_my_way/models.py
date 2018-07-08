@@ -1,5 +1,4 @@
 import psycopg2
-from pprint import pprint
 from werkzeug.security import generate_password_hash, check_password_hash
 from ride_my_way.database_tables import tables_list  # has the sql for table creation
 import jwt
@@ -26,7 +25,7 @@ class DatabaseConnection(object):
 
     def __init__(self):
         """ Initialising a database connection """
-        if os.getenv('APP_SETTINGS') == "'testing'":
+        if os.getenv('APP_SETTINGS') == "testing":
             self.dbname = "test_db"
         else:
             self.dbname = "Ride_my_way_2"
@@ -44,14 +43,14 @@ class DatabaseConnection(object):
             self.cursor = self.connection.cursor()
         except psycopg2.Error as err:
             # bug in returning under the __init__
-            pprint("Can not establish a database connection")
             print("Can not establish a database connection")
 
     def create_tables(self):
         """ Create database tables from the database_tables.py file """
-
+        # cursor = self.db_connection()
         for table_info in tables_list:
             for table_name in table_info:
+                # cursor.execute(table_info[table_name])
                 self.cursor.execute(table_info[table_name])
 
     def should_be_unique(self,
@@ -106,11 +105,13 @@ class DatabaseConnection(object):
 
     def sign_in(self, username, password):
         """ A sign a web token to current user if username and password match """
-
-        # query the user table for the username and password
-        select_query = "SELECT username, password, id FROM carpool_users"
-        self.cursor.execute(select_query)
-        result = self.cursor.fetchall()
+        try:
+            # query the user table for the username and password
+            select_query = "SELECT username, password, id FROM carpool_users"
+            self.cursor.execute(select_query)
+            result = self.cursor.fetchall()
+        except Exception as err:
+            return str(err)
 
         # assigning a web token if info right
         for user_info in result:
