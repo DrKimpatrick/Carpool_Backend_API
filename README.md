@@ -38,7 +38,7 @@ and agrees to all the conditions specified (price and general behavior).
 - GET api/v1/users/rides/#/requests (view a list of ride requests to the ride)
 - GET api/v1/this/user/rides (rides given)
 - PUT api/v1/users/rides/5/reaction (reject or accept request)
-- POST api/v1/rides/#/requests (Make ride request)
+- POST api/v1/rides/#/requests (Make ride request pass in id)
 - GET api/v1/users (List all application users)
 
 **Getting Started**
