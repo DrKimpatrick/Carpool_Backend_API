@@ -125,9 +125,11 @@ class TestRideMyWay(unittest.TestCase):
                          "finish_date": "1st/06/2018",
                          "terms": "terms"}
 
+        # *********** Reject or accept ride request *****************
         self.reject_request = {"reaction": "reject"}
         self.accept_request = {"reaction": "accept"}
         self.pend_request = {"reaction": "pending"}
+        self.reaction_400 = {"reaction_400": "400"}
 
     # ********** Test whether the endpoints are protected ****************
 
@@ -1048,6 +1050,17 @@ class TestRideMyWay(unittest.TestCase):
                                 headers={'Authorization': self.token}, content_type=content_type)
         # self.assertEqual(response_400.status_code, 400)
         self.assertEqual(response.json, {"message": "Ride request successfully {}".format("rejected")})
+
+        # supply wrong key | remember right key is 'reaction'
+        response = self.app.put('{}users/rides/1/reaction'.format(BASE_URL),
+                                data=json.dumps(self.reaction_400),
+                                headers={'Authorization': self.token}, content_type=content_type)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {
+                "message":
+                "Input should be of type dictionary where key is 'reaction' and"
+                " value 'reject' or 'accept' or 'pending' set back to default"
+            })
 
         # supply request id that does not exist
         response = self.app.put('{}users/rides/2/reaction'.format(BASE_URL),

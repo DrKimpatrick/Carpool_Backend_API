@@ -254,7 +254,7 @@ def reaction_to_ride_request(current_user, request_id):
                 "Input should be of type dictionary where key is 'reaction' and"
                 " value 'reject' or 'accept' or 'pending' set back to default"
             }
-        )
+        ), 400
 
     status = request.json['reaction']
     # changing the status of a request
