@@ -105,11 +105,13 @@ class DatabaseConnection(object):
 
     def sign_in(self, username, password):
         """ A sign a web token to current user if username and password match """
-
-        # query the user table for the username and password
-        select_query = "SELECT username, password, id FROM carpool_users"
-        self.cursor.execute(select_query)
-        result = self.cursor.fetchall()
+        try:
+            # query the user table for the username and password
+            select_query = "SELECT username, password, id FROM carpool_users"
+            self.cursor.execute(select_query)
+            result = self.cursor.fetchall()
+        except Exception as err:
+            return str(err)
 
         # assigning a web token if info right
         for user_info in result:
