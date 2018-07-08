@@ -47,10 +47,8 @@ class DatabaseConnection(object):
 
     def create_tables(self):
         """ Create database tables from the database_tables.py file """
-        # cursor = self.db_connection()
         for table_info in tables_list:
             for table_name in table_info:
-                # cursor.execute(table_info[table_name])
                 self.cursor.execute(table_info[table_name])
 
     def should_be_unique(self,
@@ -121,10 +119,10 @@ class DatabaseConnection(object):
                     'exp': datetime.utcnow() + timedelta(seconds=JWT_EXP_DELTA_SECONDS)
                 }
                 token = jwt.encode(payload, JWT_SECRET, JWT_ALGORITHM)
-                return token.decode('UTF-8')
+                return jsonify({"message": token.decode('UTF-8')})
 
         else:
-            return "Email or password is incorrect"
+            return jsonify({"message": "Email or password is incorrect"})
 
     def get_all_users(self):
         """ Returns a list of all users in the database """
@@ -288,6 +286,21 @@ class DatabaseConnection(object):
                     )
         except psycopg2.Error as err:
             return jsonify({"message": str(err)})
+
+        # check to see whether the current user is the author of that ride
+        # Current user should not make a request to the ride he/she created
+        try:
+            sql = "SELECT * FROM carpool_rides WHERE id={} AND driver_id={}".format(ride_id, current_user)
+            self.cursor.execute(sql)
+            result = self.cursor.fetchall()
+        except psycopg2.Error as err:
+            return jsonify({"message": "Ride_id ({}) does not exist".format(ride_id)})
+
+        if result:
+            return jsonify(
+                {"message":
+                 "Your can not make a ride request to a ride you created"}
+            )
 
         # Now make a request to a ride offer
         try:

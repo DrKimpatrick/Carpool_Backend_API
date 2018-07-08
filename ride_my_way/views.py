@@ -97,7 +97,7 @@ def login():
 
     # sign_in now
     result = database_connection.sign_in(username, password)
-    return jsonify({"message": result})
+    return result
 
 
 @app.route('/api/v1/users', methods=['GET'])
@@ -221,10 +221,15 @@ def request_for_ride(current_user, ride_id):
 @token_required
 def requests_to_this_ride(current_user, ride_id):
     """ Retrieves all ride requests for that ride offer with id passed in """
-    if isinstance(ride_id, int):
+    try:
+        ride_id = int(ride_id)
+    except ValueError as exc:
         return jsonify(
-            {"message": "Input should be integer"}
+            {"message": "ride_id should be of type integer"}
         )
+    if not isinstance(ride_id, int):
+        return jsonify({"message": "ride_id should be of type integer"})
+
     result = database_connection.requests_to_this_ride(current_user[0], ride_id)
     return result
 
@@ -233,6 +238,14 @@ def requests_to_this_ride(current_user, ride_id):
 @token_required
 def reaction_to_ride_request(current_user, request_id):
     """ Driver accepts or rejects a ride request """
+    try:
+        request_id = int(request_id)
+    except ValueError as exc:
+        return jsonify(
+            {"message": "request_id should be of type integer"}
+        )
+    if not isinstance(request_id, int):
+        return jsonify({"message": "request_id should be of type integer"})
 
     if not request.json or 'reaction' not in request.json:
         return jsonify(
@@ -251,13 +264,6 @@ def reaction_to_ride_request(current_user, request_id):
         status = 'accepted'
     if status == 'pending':
         status = 'pending'
-
-    if isinstance(request_id, int):
-        return jsonify(
-            {
-                "message": "Input should be integer"
-            }
-        )
 
     result = database_connection.respond_to_request(current_user[0], request_id, status)
     return result
