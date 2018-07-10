@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/DrKimpatrick/Andela_bootcamp_week_2.svg?branch=master)](https://travis-ci.org/DrKimpatrick/Andela_bootcamp_week_2)
 [![Coverage Status](https://coveralls.io/repos/github/DrKimpatrick/Andela_bootcamp_week_2/badge.svg?branch=master)](https://coveralls.io/github/DrKimpatrick/Andela_bootcamp_week_2?branch=master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/maintainability)](https://codeclimate.com/github/codeclimate/codeclimate/maintainability)
 
 # Ride-my-way (Carpool Andela Bootcamp 09 Project)
 
