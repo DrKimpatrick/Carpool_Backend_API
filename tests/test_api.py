@@ -401,7 +401,6 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_wrong_contribution),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {'message': 'contribution should be integer'})
         self.assertEqual(response.status_code, 400)
 
