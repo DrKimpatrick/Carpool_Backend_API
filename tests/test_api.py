@@ -140,6 +140,7 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.get('{}users'.format(BASE_URL),
                                 content_type=content_type)
         self.assertEqual(response.json, {"message": "Token missing"})
+        self.assertEqual(response.status_code, 400)
 
     def test_create_ride_protected(self):
         """ Confirm list_of_users endpoint is protected
@@ -148,6 +149,7 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  content_type=content_type)
         self.assertEqual(response.json, {"message": "Token missing"})
+        self.assertEqual(response.status_code, 400)
 
     def test_available_ride_protected(self):
         """ Confirm available_ride endpoint is protected
@@ -156,6 +158,7 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.get('{}rides'.format(BASE_URL),
                                 content_type=content_type)
         self.assertEqual(response.json, {"message": "Token missing"})
+        self.assertEqual(response.status_code, 400)
 
     def test_driver_rides_protected(self):
         """ Confirm driver_ride endpoint is protected
@@ -164,6 +167,7 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.get('{}this/user/rides'.format(BASE_URL),
                                 content_type=content_type)
         self.assertEqual(response.json, {"message": "Token missing"})
+        self.assertEqual(response.status_code, 400)
 
     def test_get_single_ride_protected(self):
         """ Confirm get_single_ride endpoint is protected
@@ -172,6 +176,7 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}rides/1/requests'.format(BASE_URL),
                                  content_type=content_type)
         self.assertEqual(response.json, {"message": "Token missing"})
+        self.assertEqual(response.status_code, 400)
 
     def test_request_for_ride_protected(self):
         """ Confirm request_for_ride endpoint is protected
@@ -180,6 +185,7 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}rides/<ride_id>/requests'.format(BASE_URL),
                                  content_type=content_type)
         self.assertEqual(response.json, {"message": "Token missing"})
+        self.assertEqual(response.status_code, 400)
 
     def test_requests_to_this_ride_protected(self):
         """ Confirm requests_to_this_ride endpoint is protected
@@ -189,6 +195,7 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.get('{}users/rides/1/requests'.format(BASE_URL),
                                 content_type=content_type)
         self.assertEqual(response.json, {"message": "Token missing"})
+        self.assertEqual(response.status_code, 400)
 
     def test_reaction_to_ride_request_protected(self):
         """ Confirm reaction_to_ride_request endpoint is protected
@@ -198,6 +205,7 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.put('{}users/rides/2/reaction'.format(BASE_URL),
                                 content_type=content_type)
         self.assertEqual(response.json, {"message": "Token missing"})
+        self.assertEqual(response.status_code, 400)
 
     # ************** Test Signup **************************************************
 
@@ -248,6 +256,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response_3.status_code, 400)
         self.assertEqual(response_3.json,
                          {"message": "You have either missed out some info or used wrong keys"})
+        self.assertEqual(response_3.status_code, 400)
 
     # ************************* Test Login **********************************
 
@@ -363,6 +372,7 @@ class TestRideMyWay(unittest.TestCase):
                                  headers={'Authorization': self.token}, content_type=content_type)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json, {'message': 'You have either missed out some info or used wrong keys'})
+        self.assertEqual(response.status_code, 400)
 
     # Lets try creating a ride but supply wrong data
     def test_create_ride_wrong(self):
@@ -393,6 +403,7 @@ class TestRideMyWay(unittest.TestCase):
                                  headers={'Authorization': self.token}, content_type=content_type)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {'message': 'contribution should be integer'})
+        self.assertEqual(response.status_code, 400)
 
     # ************ Test available rides **********************************
 
@@ -531,6 +542,7 @@ class TestRideMyWay(unittest.TestCase):
 
         # self.assertEqual(response_400.status_code, 400)
         self.assertEqual(response.json, {'message': 'Input should be integer'})
+        self.assertEqual(response.status_code, 400)
 
     def test_get_single_ride_2(self):
         """ Create a user , login and then create a ride
@@ -1075,6 +1087,7 @@ class TestRideMyWay(unittest.TestCase):
                                 headers={'Authorization': self.token}, content_type=content_type)
         # self.assertEqual(response_400.status_code, 400)
         self.assertEqual(response.json, {"message": "request_id should be of type integer"})
+        self.assertEqual(response.status_code, 400)
 
     def tearDown(self):
         sql_requests = "DROP TABLE IF EXISTS carpool_ride_request"
