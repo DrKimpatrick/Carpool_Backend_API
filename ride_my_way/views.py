@@ -139,28 +139,28 @@ def create_ride(current_user):
     # Checking for errors
 
     if not isinstance(terms, str):
-        return jsonify({"message": "terms should be string"})
+        return jsonify({"message": "terms should be string"}), 400
 
     if not isinstance(start_date, str):
-        return jsonify({"message": "Start date should be string"})
+        return jsonify({"message": "Start date should be string"}), 400
 
     if not isinstance(finish_date, str):
-        return jsonify({"message": "Finish date should be string"})
+        return jsonify({"message": "Finish date should be string"}), 400
 
     if not isinstance(free_spots, int):
-        return jsonify({"message": "Free spots should be integer"})
+        return jsonify({"message": "Free spots should be integer"}), 400
 
     if not isinstance(origin, str):
-        return jsonify({"message": "Origin should be string"})
+        return jsonify({"message": "Origin should be string"}), 400
 
     if not isinstance(destination, str):
-        return jsonify({"message": "Destination should be string"})
+        return jsonify({"message": "Destination should be string"}), 400
 
     if not isinstance(meet_point, str):
-        return jsonify({"message": "meet_point should be string"})
+        return jsonify({"message": "meet_point should be string"}), 400
 
     if not isinstance(contribution, (int, float, complex)):
-        return jsonify({"message": "contribution should be integer"})
+        return jsonify({"message": "contribution should be integer"}), 400
 
     result = database_connection.create_ride(current_user[0],
                                              origin, meet_point,
