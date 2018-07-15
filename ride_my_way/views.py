@@ -26,7 +26,7 @@ def token_required(f):
             token = request.headers['Authorization']
 
         if not token:
-            return jsonify({"message": "Token missing"})
+            return jsonify({"message": "Token missing"}), 400
 
 
         try:
@@ -36,7 +36,7 @@ def token_required(f):
             database_connection.cursor.execute(sql)
             current_user = database_connection.cursor.fetchone()
         except Exception as ex:
-            return jsonify({"message": str(ex)})
+            return jsonify({"message": str(ex)}), 400
 
         return f(current_user, *args, **kwargs)
     return decorated
