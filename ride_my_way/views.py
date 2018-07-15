@@ -194,10 +194,10 @@ def get_single_ride(current_user, ride_id):
     try:
         ride_id = int(ride_id)
     except:
-        return jsonify({"message": "Input should be integer"})
+        return jsonify({"message": "Input should be integer"}), 400
 
     if not isinstance(ride_id, int):
-        return jsonify({"message": "Input should integer"})
+        return jsonify({"message": "Input should integer"}), 400
     else:
         result = database_connection.ride_details(ride_id)
         return result
@@ -212,7 +212,7 @@ def request_for_ride(current_user, ride_id):
     except ValueError as exc:
         return jsonify(
             {"message": "ride_id should be of type integer"}
-        )
+        ), 400
     result = database_connection.request_ride(current_user[0], ride_id)
     return result
 
@@ -226,9 +226,9 @@ def requests_to_this_ride(current_user, ride_id):
     except ValueError as exc:
         return jsonify(
             {"message": "ride_id should be of type integer"}
-        )
+        ), 400
     if not isinstance(ride_id, int):
-        return jsonify({"message": "ride_id should be of type integer"})
+        return jsonify({"message": "ride_id should be of type integer"}), 400
 
     result = database_connection.requests_to_this_ride(current_user[0], ride_id)
     return result
@@ -243,9 +243,9 @@ def reaction_to_ride_request(current_user, request_id):
     except ValueError as exc:
         return jsonify(
             {"message": "request_id should be of type integer"}
-        )
+        ), 400
     if not isinstance(request_id, int):
-        return jsonify({"message": "request_id should be of type integer"})
+        return jsonify({"message": "request_id should be of type integer"}), 400
 
     if not request.json or 'reaction' not in request.json:
         return jsonify(
