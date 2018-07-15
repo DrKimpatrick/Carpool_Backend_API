@@ -99,7 +99,7 @@ class DatabaseConnection(object):
                                 )
         except Exception as err:
             return jsonify({"message": "Username, email or phone_number already used "})
-        return jsonify({"message": "Account successfully created"})
+        return jsonify({"message": "Account successfully created"}), 201
 
     def sign_in(self, username, password):
         """ A sign a web token to current user if username and password match """
@@ -176,7 +176,7 @@ class DatabaseConnection(object):
                                 )
         except psycopg2.Error as err:
             return str(err)
-        return "Ride create successfully"
+        return jsonify({"message": "Ride create successfully"}), 201
 
     def get_rides(self):
         """ Returns a list of all ride offers available """
@@ -199,7 +199,7 @@ class DatabaseConnection(object):
             ride_info['ride_id'] = ride[6]
 
             rides_list.append(ride_info)
-        return jsonify({"Rides": rides_list})
+        return jsonify({"Rides": rides_list}), 200
 
     def rides_given(self, driver_id):
         """ Returns a list of rides given by the User(Driver)"""

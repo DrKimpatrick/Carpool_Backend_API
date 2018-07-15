@@ -217,7 +217,7 @@ class TestRideMyWay(unittest.TestCase):
                                      data=json.dumps(self.user_1),
                                      content_type=content_type)
 
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 201)
             self.assertEqual(response.json,
                              {"message": "Account successfully created"})
 
@@ -227,7 +227,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -243,7 +243,7 @@ class TestRideMyWay(unittest.TestCase):
         response_2 = self.app.post("{}auth/signup".format(BASE_URL),
                                    data=json.dumps(self.user_2),
                                    content_type=content_type)
-        self.assertEqual(response_2.status_code, 200)
+        self.assertEqual(response_2.status_code, 201)
         self.assertEqual(response_2.json,
                          {"message": "Account successfully created"})  # length=2
 
@@ -287,7 +287,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -304,7 +304,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -325,7 +325,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -342,7 +342,7 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
     # Lets try creating a ride but supply wrong data
@@ -353,7 +353,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -384,7 +384,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -413,7 +413,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -430,14 +430,14 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         # check for the number of rides present
@@ -455,7 +455,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -477,14 +477,14 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         # check for the number of rides present
@@ -504,7 +504,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -526,20 +526,18 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         # check for the number of rides present
         response = self.app.get('{}rides/<ride_id>'.format(BASE_URL), headers={'Authorization': self.token}, content_type=content_type)
-
-        # self.assertEqual(response_400.status_code, 400)
         self.assertEqual(response.json, {'message': 'Input should be integer'})
         self.assertEqual(response.status_code, 400)
 
@@ -552,7 +550,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -574,14 +572,14 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         # check for the number of rides present
@@ -599,7 +597,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -621,20 +619,19 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         # check for the number of rides present
         response = self.app.get('{}rides/4'.format(BASE_URL), headers={'Authorization': self.token}, content_type=content_type)
 
-        # self.assertEqual(response_400.status_code, 400)
         self.assertEqual(response.json, {"message": "The ride offer with ride_id {} does not exist".format(4)})
 
     # *********** Test request to join ride *****************************
@@ -655,7 +652,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -678,7 +675,7 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         """ Create second ride offer 2nd"""
@@ -686,7 +683,7 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         """ Creating another user who will request to join a ride"""
@@ -694,7 +691,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_2),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -718,7 +715,6 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}rides/1/requests'.format(BASE_URL),
                                  # data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
         self.assertEqual(response.json, {'message': 'Your request has been successfully sent and pending approval'})
 
     def test_request_for_ride_2(self):
@@ -730,7 +726,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -752,14 +748,14 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         """ Creating another user """
@@ -767,7 +763,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_2),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -809,7 +805,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -832,7 +828,7 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         """ Now let the current user request to join a ride he/she has created"""
@@ -859,7 +855,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -882,7 +878,7 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         # ---------------------------------------------------------------------------------
@@ -891,7 +887,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_2),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -967,7 +963,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 
@@ -990,7 +986,7 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token}, content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json, {"message": "Ride create successfully"})
 
         # ---------------------------------------------------------------------------------
@@ -999,7 +995,7 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.user_2),
                                  content_type=content_type)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
 

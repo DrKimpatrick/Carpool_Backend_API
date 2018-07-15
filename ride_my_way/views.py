@@ -168,7 +168,7 @@ def create_ride(current_user):
                                              free_spots,
                                              start_date,
                                              finish_date)
-    return jsonify({"message": result})
+    return result
 
 
 @app.route('/api/v1/rides', methods=['GET'])
