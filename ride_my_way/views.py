@@ -3,6 +3,7 @@ from ride_my_way.models import DatabaseConnection
 from functools import wraps
 import jwt
 import datetime
+import re
 
 app = Flask(__name__)  # Initialising a flask application
 
@@ -68,6 +69,15 @@ def create_user():
     bio = request.json['bio']
     gender = request.json['gender']
     password = request.json['password']
+
+    # message returned when email is invalid
+    wrong_email = "{} is not a valid email".format(email)
+
+    # verifying the submitted email
+    pattern = r"\"?([-a-zA-Z0-9.`?{}]+@\w+\.\w+)\"?"
+    email = re.match(pattern, email)  # returns none if no match
+    if not email:
+        return jsonify({"message": wrong_email}), 400
 
     result = database_connection.signup(name,
                                         email,
