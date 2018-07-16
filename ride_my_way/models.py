@@ -122,7 +122,7 @@ class DatabaseConnection(object):
                 return jsonify({"message": token.decode('UTF-8')})
 
         else:
-            return jsonify({"message": "Email or password is incorrect"})
+            return jsonify({"message": "Email or password is incorrect"}), 404
 
     def get_all_users(self):
         """ Returns a list of all users in the database """
@@ -210,7 +210,7 @@ class DatabaseConnection(object):
             self.cursor.execute(sql)
             result = self.cursor.fetchall()
         except:
-            return jsonify({"message": "Some thing went wrong"})
+            return jsonify({"message": "Some thing went wrong"}), 404
 
         rides_list = []
         for ride in result:
@@ -253,7 +253,9 @@ class DatabaseConnection(object):
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
         if not result:
-            return jsonify({"message": "The ride offer with ride_id {} does not exist".format(ride_id)})
+            return jsonify(
+                {"message": "The ride offer with ride_id {} does not exist".format(ride_id)}
+            ), 404
 
         ride_info = {}
         for info in result:
@@ -294,7 +296,7 @@ class DatabaseConnection(object):
             self.cursor.execute(sql)
             result = self.cursor.fetchall()
         except psycopg2.Error as err:
-            return jsonify({"message": "Ride_id ({}) does not exist".format(ride_id)})
+            return jsonify({"message": "Ride_id ({}) does not exist".format(ride_id)}), 404
 
         if result:
             return jsonify(
@@ -308,7 +310,7 @@ class DatabaseConnection(object):
                   " VALUES(%s, %s)"
             self.cursor.execute(sql, (ride_id, current_user))
         except psycopg2.Error as err:
-            return jsonify({"message": "Ride_id ({}) does not exist".format(ride_id)})
+            return jsonify({"message": "Ride_id ({}) does not exist".format(ride_id)}), 404
         return jsonify(
             {"message":
              "Your request has been successfully sent and pending approval"}
@@ -343,7 +345,7 @@ class DatabaseConnection(object):
                 {"message":
                  "You don't have a ride with ride_id ({}), recheck the info and try again"
                  .format(ride_id)}
-            )
+            ), 404
 
         try:
             # fetching data from the ride requests table where ride_id is
@@ -358,7 +360,7 @@ class DatabaseConnection(object):
             return jsonify(
                 {"message":
                  "No requests made to ride with ride_id ({})".format(ride_id)}
-            )
+            ), 404
 
         requests_list = []
         for r_request in result:
@@ -392,7 +394,7 @@ class DatabaseConnection(object):
                 {
                     "message": "No request with id ({})".format(request_id)
                 }
-            )
+            ), 404
 
         # getting the ride_id to the ride where the request is made
         # result is of length one
@@ -411,7 +413,7 @@ class DatabaseConnection(object):
                  "message":
                  "Sorry, you can only react to a ride request for the ride you created"
                 }
-            )
+            ), 404
         sql = "UPDATE carpool_ride_request SET accepted='{}' WHERE id={}"\
               .format(status, request_id)
 
