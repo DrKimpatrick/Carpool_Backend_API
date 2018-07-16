@@ -241,6 +241,7 @@ class TestRideMyWay(unittest.TestCase):
                                  content_type=content_type)
         self.assertEqual(response.json,
                          {'message': 'Username already taken, try another'})
+        self.assertEqual(response.status_code, 406)
 
     def test_create_user_3(self):
         """ Second user instance | all expected to work fine """

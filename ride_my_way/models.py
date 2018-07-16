@@ -65,11 +65,14 @@ class DatabaseConnection(object):
         row = self.cursor.fetchall()
         for result in row:
             if result[0] == username:
-                return jsonify({"message": "Username already taken, try another"}), 406
+                return jsonify(
+                    {"message": "Username already taken, try another"}), 406
             if result[1] == email:
-                return jsonify({"message": "User account with that email already exists"}), 406
+                return jsonify(
+                    {"message": "User account with that email already exists"}), 406
             if result[2] == phone_number:
-                return jsonify({"message": "User account with that phone number already exists"}), 406
+                return jsonify(
+                    {"message": "User account with that phone number already exists"}), 406
 
     def signup(self,
                name,
