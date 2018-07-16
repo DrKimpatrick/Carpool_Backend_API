@@ -345,7 +345,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
@@ -375,7 +375,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
 
         # supply information with wrong keys and missing parameters
         response = self.app.post('{}users/rides'.format(BASE_URL),
@@ -409,7 +409,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
 
         # supply information with wrong keys and missing parameters
         response = self.app.post('{}users/rides'.format(BASE_URL),
@@ -440,7 +440,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
@@ -488,7 +488,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
         data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
@@ -544,7 +544,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
         data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
@@ -597,7 +597,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
         data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
@@ -650,7 +650,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
         data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
@@ -715,7 +715,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
         data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
@@ -758,7 +758,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
         data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
@@ -797,7 +797,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
         data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
@@ -838,7 +838,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
         data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
@@ -883,7 +883,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
         data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
@@ -942,7 +942,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
         data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
@@ -977,7 +977,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
         data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
@@ -1009,7 +1009,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
         data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
@@ -1063,7 +1063,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
         data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
@@ -1098,7 +1098,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
         data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
@@ -1141,7 +1141,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         # capturing the token
-        self.token = response.json['message']
+        self.token = response.json['Token']
         data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])

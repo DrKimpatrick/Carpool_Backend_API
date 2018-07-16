@@ -122,7 +122,7 @@ class DatabaseConnection(object):
                     'exp': datetime.utcnow() + timedelta(seconds=JWT_EXP_DELTA_SECONDS)
                 }
                 token = jwt.encode(payload, JWT_SECRET, JWT_ALGORITHM)
-                return jsonify({"message": token.decode('UTF-8')}), 200
+                return jsonify({"Token": token.decode('UTF-8')}), 200
 
         else:
             return jsonify({"message": "Email or password is incorrect"}), 404
