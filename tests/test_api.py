@@ -230,10 +230,9 @@ class TestRideMyWay(unittest.TestCase):
         response = self.app.post("{}auth/signup".format(BASE_URL),
                                  data=json.dumps(self.user_1),
                                  content_type=content_type)
-
-        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json,
                          {"message": "Account successfully created"})
+        self.assertEqual(response.status_code, 201)
 
         # Creating another user with the same username, email and password
         response = self.app.post("{}auth/signup".format(BASE_URL),

@@ -101,7 +101,7 @@ class DatabaseConnection(object):
                                  bio, gender, hashed_password)
                                 )
         except Exception as err:
-            return jsonify({"message": "Username, email or phone_number already used "}), 406
+            return jsonify({"message": "{}".format(str(err))}), 406
         return jsonify({"message": "Account successfully created"}), 201
 
     def sign_in(self, username, password):

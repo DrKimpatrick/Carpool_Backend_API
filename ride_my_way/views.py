@@ -74,13 +74,14 @@ def create_user():
     wrong_email = "{} is not a valid email".format(email)
 
     # verifying the submitted email
+
     pattern = r"\"?([-a-zA-Z0-9.`?{}]+@\w+\.\w+)\"?"
     email = re.match(pattern, email)  # returns none if no match
     if not email:
         return jsonify({"message": wrong_email}), 400
 
     result = database_connection.signup(name,
-                                        email,
+                                        str(email),  # convert back to string
                                         username,
                                         phone_number,
                                         bio, gender,
