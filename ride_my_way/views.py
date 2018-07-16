@@ -3,7 +3,7 @@ from ride_my_way.models import DatabaseConnection
 from functools import wraps
 import jwt
 import datetime
-import re
+import re  # # here i import the module that implements regular expressions
 
 app = Flask(__name__)  # Initialising a flask application
 
@@ -43,6 +43,37 @@ def token_required(f):
     return decorated
 
 
+# here is my function for checking valid email address
+def test_email(email):
+    # message returned when email is invalid
+    wrong_email = "{} is not a valid email".format(email)
+
+    # verifying the submitted email
+
+    pattern = r"\"?([-a-zA-Z0-9.`?{}]+@\w+\.\w+)\"?"
+    email = re.match(pattern, email)  # returns none if no match
+    if not email:
+        return jsonify({"message": wrong_email}), 400
+
+
+# here is my function for checking valid
+def test_phone_number(phone_number):
+    wrong_phone_number = "{} is not a valid phone number".format(phone_number)
+    pattern = r"^(\+?\d{1,4}[\s-])?(?!0+\s+,?$)\d{10}\s*,?$"
+    phone_number = re.match(pattern, phone_number)
+    if not phone_number:
+        return jsonify({"message": wrong_phone_number}), 400
+
+
+# here is a function for checking a valid password
+def test_password(password):
+    wrong_password = "Password should be alphanumeric and at least 6 characters long"
+    pattern = r"^(?=.*\d)(?=.*[a-z])[a-zA-Z0-9]{6,999}$"
+    password = re.match(pattern, password)
+    if not password:
+        return jsonify({"message": wrong_password}), 400
+
+
 @app.route('/api/v1/auth/signup', methods=['POST'])
 def create_user():
     """ Creating a user account
@@ -70,18 +101,23 @@ def create_user():
     gender = request.json['gender']
     password = request.json['password']
 
-    # message returned when email is invalid
-    wrong_email = "{} is not a valid email".format(email)
+    """ 
+        implement function for testing email
+        function only returns an error if any
+    """
+    if test_email(email):
+        return test_email(email)
 
-    # verifying the submitted email
+    # implement function for testing phone number
+    if test_phone_number(phone_number):
+        return test_phone_number(phone_number)
 
-    pattern = r"\"?([-a-zA-Z0-9.`?{}]+@\w+\.\w+)\"?"
-    email = re.match(pattern, email)  # returns none if no match
-    if not email:
-        return jsonify({"message": wrong_email}), 400
+    # implement function for testing password
+    if test_password(password):
+        return test_password(password)
 
     result = database_connection.signup(name,
-                                        str(email),  # convert back to string
+                                        email,  # convert back to string
                                         username,
                                         phone_number,
                                         bio, gender,

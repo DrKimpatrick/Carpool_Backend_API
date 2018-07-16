@@ -36,7 +36,7 @@ class TestRideMyWay(unittest.TestCase):
             "name": "patrick",
             "email": "dr.kimpatrick@gmail.com",
             "username": "kimpatrick",
-            "phone_number": "078127364",
+            "phone_number": "0781273641",
             "bio": "This is patrick, mum's last born",
             "gender": "Male",
             "password": "Kp15712Kp"
