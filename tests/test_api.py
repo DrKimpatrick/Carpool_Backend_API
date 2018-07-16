@@ -131,6 +131,17 @@ class TestRideMyWay(unittest.TestCase):
         self.pend_request = {"reaction": "pending"}
         self.reaction_400 = {"reaction_400": "400"}
 
+    # ********** get_current user *******************************
+    """ Helper func that gets the current user info """
+    def get_current_user(self, token):
+
+        data = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+
+        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
+        self.cur.cursor.execute(sql)
+        return_current_user = self.cur.cursor.fetchone()
+        return return_current_user
+
     # ********** Test whether the endpoints are protected **************
 
     def test_list_of_users_protected(self):
@@ -489,11 +500,9 @@ class TestRideMyWay(unittest.TestCase):
 
         # capturing the token
         self.token = response.json['Token']
-        data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
-        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
-        self.cur.cursor.execute(sql)
-        self.current_user = self.cur.cursor.fetchone()
+        # implement a helper func for getting the current_use info e.g id
+        self.current_user = self.get_current_user(self.token)
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
@@ -545,11 +554,6 @@ class TestRideMyWay(unittest.TestCase):
 
         # capturing the token
         self.token = response.json['Token']
-        data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-
-        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
-        self.cur.cursor.execute(sql)
-        self.current_user = self.cur.cursor.fetchone()
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
@@ -598,11 +602,6 @@ class TestRideMyWay(unittest.TestCase):
 
         # capturing the token
         self.token = response.json['Token']
-        data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-
-        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
-        self.cur.cursor.execute(sql)
-        self.current_user = self.cur.cursor.fetchone()
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
@@ -651,11 +650,6 @@ class TestRideMyWay(unittest.TestCase):
 
         # capturing the token
         self.token = response.json['Token']
-        data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-
-        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
-        self.cur.cursor.execute(sql)
-        self.current_user = self.cur.cursor.fetchone()
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
@@ -716,11 +710,6 @@ class TestRideMyWay(unittest.TestCase):
 
         # capturing the token
         self.token = response.json['Token']
-        data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-
-        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
-        self.cur.cursor.execute(sql)
-        self.current_user = self.cur.cursor.fetchone()
 
         """ Create a ride offer 1st"""
         # supply right information
@@ -759,11 +748,6 @@ class TestRideMyWay(unittest.TestCase):
 
         # capturing the token
         self.token = response.json['Token']
-        data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-
-        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
-        self.cur.cursor.execute(sql)
-        self.current_user = self.cur.cursor.fetchone()
 
         """ Now let the user request for the first ride id=1"""
         # supply right information
@@ -798,11 +782,6 @@ class TestRideMyWay(unittest.TestCase):
 
         # capturing the token
         self.token = response.json['Token']
-        data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-
-        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
-        self.cur.cursor.execute(sql)
-        self.current_user = self.cur.cursor.fetchone()
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
@@ -839,11 +818,6 @@ class TestRideMyWay(unittest.TestCase):
 
         # capturing the token
         self.token = response.json['Token']
-        data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-
-        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
-        self.cur.cursor.execute(sql)
-        self.current_user = self.cur.cursor.fetchone()
 
         # supply right information
         response = self.app.post('{}rides/19/requests'.format(BASE_URL),
@@ -853,7 +827,7 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json,
                          {"message": "Ride_id ({}) does not exist"
-                         .format(19)})
+                          .format(19)})
 
     # current user request to join a ride he/she has created
     def test_request_for_ride_3(self):
@@ -884,11 +858,6 @@ class TestRideMyWay(unittest.TestCase):
 
         # capturing the token
         self.token = response.json['Token']
-        data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-
-        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
-        self.cur.cursor.execute(sql)
-        self.current_user = self.cur.cursor.fetchone()
 
         """ Create a ride offer 1st"""
         # supply right information
@@ -943,11 +912,6 @@ class TestRideMyWay(unittest.TestCase):
 
         # capturing the token
         self.token = response.json['Token']
-        data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-
-        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
-        self.cur.cursor.execute(sql)
-        self.current_user = self.cur.cursor.fetchone()
 
         """ Create a ride offer 1st"""
         # supply right information
@@ -978,11 +942,6 @@ class TestRideMyWay(unittest.TestCase):
 
         # capturing the token
         self.token = response.json['Token']
-        data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-
-        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
-        self.cur.cursor.execute(sql)
-        self.current_user = self.cur.cursor.fetchone()
 
         """ Now let the user request for the first ride id=1"""
         # supply right information
@@ -1010,11 +969,6 @@ class TestRideMyWay(unittest.TestCase):
 
         # capturing the token
         self.token = response.json['Token']
-        data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-
-        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
-        self.cur.cursor.execute(sql)
-        self.current_user = self.cur.cursor.fetchone()
 
         """ View requests made to the ride offer """
         # supply right information
@@ -1064,11 +1018,6 @@ class TestRideMyWay(unittest.TestCase):
 
         # capturing the token
         self.token = response.json['Token']
-        data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-
-        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
-        self.cur.cursor.execute(sql)
-        self.current_user = self.cur.cursor.fetchone()
 
         """ Create a ride offer 1st"""
         # supply right information
@@ -1099,11 +1048,6 @@ class TestRideMyWay(unittest.TestCase):
 
         # capturing the token
         self.token = response.json['Token']
-        data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-
-        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
-        self.cur.cursor.execute(sql)
-        self.current_user = self.cur.cursor.fetchone()
 
         """ Now let the user request for the first ride id=1"""
         # supply right information
@@ -1142,11 +1086,6 @@ class TestRideMyWay(unittest.TestCase):
 
         # capturing the token
         self.token = response.json['Token']
-        data = jwt.decode(self.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-
-        sql = "SELECT * FROM  carpool_users WHERE id=%s" % (data['id'])
-        self.cur.cursor.execute(sql)
-        self.current_user = self.cur.cursor.fetchone()
 
         """ View requests made to the ride offer """
         # supply right information
