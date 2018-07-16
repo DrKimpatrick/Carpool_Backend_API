@@ -1123,10 +1123,11 @@ class TestRideMyWay(unittest.TestCase):
                                 headers={'Authorization': self.token},
                                 content_type=content_type)
         # self.assertEqual(response_400.status_code, 400)
-        # self.assertEqual(response.json, {
-        #          "message":
-        #          "Sorry, you can only react to a ride request for the ride you created"
-        #         })
+        self.assertEqual(response.json, {
+                 "message":
+                 "Sorry, you can only react to a ride request "
+                 "for the ride you created"
+                })
 
         # ----------------------------------------------------------------
         """ Let the other first user login and view 
