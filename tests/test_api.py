@@ -775,6 +775,7 @@ class TestRideMyWay(unittest.TestCase):
                          {'message':
                           'Your request has been successfully '
                           'sent and pending approval'})
+        self.assertEqual(response.status_code, 200)
 
     def test_request_for_ride_2(self):
         """ Create a user , login and then create a ride
@@ -908,7 +909,7 @@ class TestRideMyWay(unittest.TestCase):
                                  # data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token},
                                  content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 406)
         self.assertEqual(response.json,
                          {'message':
                           'Your can not make a ride request to '
@@ -989,7 +990,7 @@ class TestRideMyWay(unittest.TestCase):
                                  # data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token},
                                  content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json,
                          {'message':
                           'Your request has been successfully sent '
@@ -1110,7 +1111,7 @@ class TestRideMyWay(unittest.TestCase):
                                  # data=json.dumps(self.ride_1),
                                  headers={'Authorization': self.token},
                                  content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json,
                          {'message':
                           'Your request has been successfully sent and '
@@ -1122,7 +1123,7 @@ class TestRideMyWay(unittest.TestCase):
                                 data=json.dumps(self.reject_request),
                                 headers={'Authorization': self.token},
                                 content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 406)
         self.assertEqual(response.json, {
                  "message":
                  "Sorry, you can only react to a ride request "
@@ -1176,7 +1177,7 @@ class TestRideMyWay(unittest.TestCase):
                                 data=json.dumps(self.reject_request),
                                 headers={'Authorization': self.token},
                                 content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json, {'message': 'No request with id (2)'})
 
         # supply string as request id
@@ -1184,7 +1185,6 @@ class TestRideMyWay(unittest.TestCase):
                                 data=json.dumps(self.reject_request),
                                 headers={'Authorization': self.token},
                                 content_type=content_type)
-        # self.assertEqual(response_400.status_code, 400)
         self.assertEqual(response.json,
                          {"message": "request_id should be of type integer"})
         self.assertEqual(response.status_code, 400)

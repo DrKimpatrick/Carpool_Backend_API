@@ -65,11 +65,11 @@ class DatabaseConnection(object):
         row = self.cursor.fetchall()
         for result in row:
             if result[0] == username:
-                return jsonify({"message": "Username already taken, try another"})
+                return jsonify({"message": "Username already taken, try another"}), 406
             if result[1] == email:
-                return jsonify({"message": "User account with that email already exists"})
+                return jsonify({"message": "User account with that email already exists"}), 406
             if result[2] == phone_number:
-                return jsonify({"message": "User account with that phone number already exists"})
+                return jsonify({"message": "User account with that phone number already exists"}), 406
 
     def signup(self,
                name,
@@ -98,7 +98,7 @@ class DatabaseConnection(object):
                                  bio, gender, hashed_password)
                                 )
         except Exception as err:
-            return jsonify({"message": "Username, email or phone_number already used "})
+            return jsonify({"message": "Username, email or phone_number already used "}), 406
         return jsonify({"message": "Account successfully created"}), 201
 
     def sign_in(self, username, password):
@@ -119,7 +119,7 @@ class DatabaseConnection(object):
                     'exp': datetime.utcnow() + timedelta(seconds=JWT_EXP_DELTA_SECONDS)
                 }
                 token = jwt.encode(payload, JWT_SECRET, JWT_ALGORITHM)
-                return jsonify({"message": token.decode('UTF-8')})
+                return jsonify({"message": token.decode('UTF-8')}), 200
 
         else:
             return jsonify({"message": "Email or password is incorrect"}), 404
@@ -210,7 +210,7 @@ class DatabaseConnection(object):
             self.cursor.execute(sql)
             result = self.cursor.fetchall()
         except:
-            return jsonify({"message": "Some thing went wrong"}), 404
+            return jsonify({"message": "Some thing went wrong"}), 500
 
         rides_list = []
         for ride in result:
@@ -285,9 +285,9 @@ class DatabaseConnection(object):
                 if request_info[0] == ride_id and request_info[1] == current_user:
                     return jsonify(
                         {"message": "You already made a request to that ride"}
-                    )
+                    ), 406
         except psycopg2.Error as err:
-            return jsonify({"message": str(err)})
+            return jsonify({"message": str(err)}), 500
 
         # check to see whether the current user is the author of that ride
         # Current user should not make a request to the ride he/she created
@@ -302,7 +302,7 @@ class DatabaseConnection(object):
             return jsonify(
                 {"message":
                  "Your can not make a ride request to a ride you created"}
-            )
+            ), 406
 
         # Now make a request to a ride offer
         try:
@@ -314,7 +314,7 @@ class DatabaseConnection(object):
         return jsonify(
             {"message":
              "Your request has been successfully sent and pending approval"}
-        )
+        ), 200
 
     def all_requests(self):
         """ Retrieves all ride requests"""
@@ -338,7 +338,7 @@ class DatabaseConnection(object):
             self.cursor.execute(sql)
             result = self.cursor.fetchall()
         except psycopg2.Error as err:
-            return jsonify({"message": str(err)})
+            return jsonify({"message": str(err)}), 500
 
         if not result:
             return jsonify(
@@ -354,7 +354,7 @@ class DatabaseConnection(object):
             self.cursor.execute(sql)
             result = self.cursor.fetchall()
         except psycopg2.Error as err:
-            return jsonify({"message": str(err)})
+            return jsonify({"message": str(err)}), 500
 
         if not result:
             return jsonify(
@@ -374,7 +374,7 @@ class DatabaseConnection(object):
             request_info['passenger details'] = passenger_info
             requests_list.append(request_info)
 
-        return jsonify({"Ride requests": requests_list})
+        return jsonify({"Ride requests": requests_list}), 200
 
     def respond_to_request(self,
                            current_user,
@@ -413,13 +413,13 @@ class DatabaseConnection(object):
                  "message":
                  "Sorry, you can only react to a ride request for the ride you created"
                 }
-            ), 404
+            ), 406
         sql = "UPDATE carpool_ride_request SET accepted='{}' WHERE id={}"\
               .format(status, request_id)
 
         self.cursor.execute(sql)
 
-        return jsonify({"message": "Ride request successfully {}".format(status)})
+        return jsonify({"message": "Ride request successfully {}".format(status)}), 200
 
 
 
