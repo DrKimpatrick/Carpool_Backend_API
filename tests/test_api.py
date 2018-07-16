@@ -131,7 +131,7 @@ class TestRideMyWay(unittest.TestCase):
         self.pend_request = {"reaction": "pending"}
         self.reaction_400 = {"reaction_400": "400"}
 
-    # ********** Test whether the endpoints are protected ****************
+    # ********** Test whether the endpoints are protected **************
 
     def test_list_of_users_protected(self):
         """ Confirm list_of_users endpoint is protected
@@ -157,7 +157,8 @@ class TestRideMyWay(unittest.TestCase):
         """
         response = self.app.get('{}rides'.format(BASE_URL),
                                 content_type=content_type)
-        self.assertEqual(response.json, {"message": "Token missing"})
+        self.assertEqual(response.json,
+                         {"message": "Token missing"})
         self.assertEqual(response.status_code, 401)
 
     def test_driver_rides_protected(self):
@@ -166,7 +167,8 @@ class TestRideMyWay(unittest.TestCase):
         """
         response = self.app.get('{}this/user/rides'.format(BASE_URL),
                                 content_type=content_type)
-        self.assertEqual(response.json, {"message": "Token missing"})
+        self.assertEqual(response.json,
+                         {"message": "Token missing"})
         self.assertEqual(response.status_code, 401)
 
     def test_get_single_ride_protected(self):
@@ -194,7 +196,8 @@ class TestRideMyWay(unittest.TestCase):
         """
         response = self.app.get('{}users/rides/1/requests'.format(BASE_URL),
                                 content_type=content_type)
-        self.assertEqual(response.json, {"message": "Token missing"})
+        self.assertEqual(response.json,
+                         {"message": "Token missing"})
         self.assertEqual(response.status_code, 401)
 
     def test_reaction_to_ride_request_protected(self):
@@ -204,10 +207,11 @@ class TestRideMyWay(unittest.TestCase):
         """
         response = self.app.put('{}users/rides/2/reaction'.format(BASE_URL),
                                 content_type=content_type)
-        self.assertEqual(response.json, {"message": "Token missing"})
+        self.assertEqual(response.json,
+                         {"message": "Token missing"})
         self.assertEqual(response.status_code, 401)
 
-    # ************** Test Signup **************************************************
+    # ************** Test Signup *******************************************
 
     def test_create_user_1(self):
             """ Creating a user | supply right data
@@ -245,7 +249,7 @@ class TestRideMyWay(unittest.TestCase):
                                    content_type=content_type)
         self.assertEqual(response_2.status_code, 201)
         self.assertEqual(response_2.json,
-                         {"message": "Account successfully created"})  # length=2
+                         {"message": "Account successfully created"})
 
     def test_create_user_4(self):
         """ Wrong and missing user fields | Should raise and error message """
@@ -255,7 +259,9 @@ class TestRideMyWay(unittest.TestCase):
 
         self.assertEqual(response_3.status_code, 400)
         self.assertEqual(response_3.json,
-                         {"message": "You have either missed out some info or used wrong keys"})
+                         {"message":
+                          "You have either missed out some "
+                          "info or used wrong keys"})
         self.assertEqual(response_3.status_code, 400)
 
     # ************************* Test Login **********************************
@@ -275,7 +281,8 @@ class TestRideMyWay(unittest.TestCase):
                                    content_type=content_type)
 
         self.assertEqual(response_1.status_code, 404)
-        self.assertEqual(response_1.json, {'message': 'Email or password is incorrect'})
+        self.assertEqual(response_1.json,
+                         {'message': 'Email or password is incorrect'})
 
     def test_login_2(self):
         """ create a user and login with with username which
@@ -295,7 +302,8 @@ class TestRideMyWay(unittest.TestCase):
                                  data=json.dumps(self.login_user_2),
                                  content_type=content_type)
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.json, {'message': 'Email or password is incorrect'})
+        self.assertEqual(response.json,
+                         {'message': 'Email or password is incorrect'})
 
     def test_login_3(self):
         """ Lets creates a user and then login expect a success """
@@ -316,7 +324,8 @@ class TestRideMyWay(unittest.TestCase):
     # ****************** Test create ride ********************************
 
     def test_create_ride_1(self):
-        """ Lets create a ride offer here, first create account login and create ride
+        """ Lets create a ride offer here, first create account
+            login and create ride
             Supply right ride data expect a success message
         """
 
@@ -341,9 +350,11 @@ class TestRideMyWay(unittest.TestCase):
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
-                                 headers={'Authorization': self.token}, content_type=content_type)
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
     # Lets try creating a ride but supply wrong data
     def test_create_ride_2(self):
@@ -369,10 +380,13 @@ class TestRideMyWay(unittest.TestCase):
         # supply information with wrong keys and missing parameters
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_400),
-                                 headers={'Authorization': self.token}, content_type=content_type)
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json,
-                         {'message': 'You have either missed out some info or used wrong keys'})
+                         {'message':
+                          'You have either missed out '
+                          'some info or used wrong keys'})
 
     # Lets try creating a ride but supply wrong data
     def test_create_ride_wrong(self):
@@ -400,8 +414,10 @@ class TestRideMyWay(unittest.TestCase):
         # supply information with wrong keys and missing parameters
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_wrong_contribution),
-                                 headers={'Authorization': self.token}, content_type=content_type)
-        self.assertEqual(response.json, {'message': 'contribution should be integer'})
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
+        self.assertEqual(response.json,
+                         {'message': 'contribution should be integer'})
         self.assertEqual(response.status_code, 400)
 
     # ************ Test available rides **********************************
@@ -429,19 +445,25 @@ class TestRideMyWay(unittest.TestCase):
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
-                                 headers={'Authorization': self.token}, content_type=content_type)
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
-                                 headers={'Authorization': self.token}, content_type=content_type)
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
         # check for the number of rides present
-        response = self.app.get('{}rides'.format(BASE_URL), headers={'Authorization': self.token}, content_type=content_type)
+        response = self.app.get('{}rides'.format(BASE_URL),
+                                headers={'Authorization': self.token},
+                                content_type=content_type)
 
         # self.assertEqual(response_400.status_code, 400)
         self.assertEqual(len(response.json['Rides']), 2)
@@ -476,22 +498,29 @@ class TestRideMyWay(unittest.TestCase):
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
-                                 headers={'Authorization': self.token}, content_type=content_type)
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
-                                 headers={'Authorization': self.token}, content_type=content_type)
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
         # check for the number of rides present
-        response = self.app.get('{}this/user/rides'.format(BASE_URL), headers={'Authorization': self.token}, content_type=content_type)
+        response = self.app.get('{}this/user/rides'.format(BASE_URL),
+                                headers={'Authorization': self.token},
+                                content_type=content_type)
 
         # self.assertEqual(response_400.status_code, 400)
-        self.assertEqual(len(response.json["{}'s ride offers".format(self.current_user[2])]), 2)
+        self.assertEqual(len(response.json["{}'s ride offers".
+                             format(self.current_user[2])]), 2)
 
     # *********** Test get single ride by id ***************************
 
@@ -525,20 +554,27 @@ class TestRideMyWay(unittest.TestCase):
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
-                                 headers={'Authorization': self.token}, content_type=content_type)
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
-                                 headers={'Authorization': self.token}, content_type=content_type)
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
         # check for the number of rides present
-        response = self.app.get('{}rides/<ride_id>'.format(BASE_URL), headers={'Authorization': self.token}, content_type=content_type)
-        self.assertEqual(response.json, {'message': 'Input should be integer'})
+        response = self.app.get('{}rides/<ride_id>'.format(BASE_URL),
+                                headers={'Authorization': self.token},
+                                content_type=content_type)
+        self.assertEqual(response.json,
+                         {'message': 'Input should be integer'})
         self.assertEqual(response.status_code, 400)
 
     def test_get_single_ride_2(self):
@@ -571,20 +607,25 @@ class TestRideMyWay(unittest.TestCase):
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
-                                 headers={'Authorization': self.token}, content_type=content_type)
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
-                                 headers={'Authorization': self.token}, content_type=content_type)
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
         # check for the number of rides present
         response = self.app.get('{}rides/<ride_id>'.format(BASE_URL),
-                                headers={'Authorization': self.token}, content_type=content_type)
+                                headers={'Authorization': self.token},
+                                content_type=content_type)
 
         # self.assertEqual(response_400.status_code, 400)
         self.assertEqual(len(response.json), 1)
@@ -619,23 +660,30 @@ class TestRideMyWay(unittest.TestCase):
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
-                                 headers={'Authorization': self.token}, content_type=content_type)
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
                                  data=json.dumps(self.ride_1),
-                                 headers={'Authorization': self.token}, content_type=content_type)
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
         # check for the number of rides present
         response = self.app.get('{}rides/4'.format(BASE_URL),
-                                headers={'Authorization': self.token}, content_type=content_type)
+                                headers={'Authorization': self.token},
+                                content_type=content_type)
 
         self.assertEqual(response.json,
-                         {"message": "The ride offer with ride_id {} does not exist".format(4)})
+                         {"message":
+                          "The ride offer with ride_id {} does not exist"
+                          .format(4)})
         self.assertEqual(response.status_code, 404)
 
     # *********** Test request to join ride *****************************
@@ -690,7 +738,8 @@ class TestRideMyWay(unittest.TestCase):
                                  headers={'Authorization': self.token},
                                  content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
         """ Creating another user who will request to join a ride"""
         response = self.app.post("{}auth/signup".format(BASE_URL),
@@ -723,7 +772,9 @@ class TestRideMyWay(unittest.TestCase):
                                  headers={'Authorization': self.token},
                                  content_type=content_type)
         self.assertEqual(response.json,
-                         {'message': 'Your request has been successfully sent and pending approval'})
+                         {'message':
+                          'Your request has been successfully '
+                          'sent and pending approval'})
 
     def test_request_for_ride_2(self):
         """ Create a user , login and then create a ride
@@ -758,7 +809,8 @@ class TestRideMyWay(unittest.TestCase):
                                  headers={'Authorization': self.token},
                                  content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
         # supply right information
         response = self.app.post('{}users/rides'.format(BASE_URL),
@@ -766,7 +818,8 @@ class TestRideMyWay(unittest.TestCase):
                                  headers={'Authorization': self.token},
                                  content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
         """ Creating another user """
         response = self.app.post("{}auth/signup".format(BASE_URL),
@@ -798,7 +851,8 @@ class TestRideMyWay(unittest.TestCase):
                                  content_type=content_type)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json,
-                         {"message": "Ride_id ({}) does not exist".format(19)})
+                         {"message": "Ride_id ({}) does not exist"
+                         .format(19)})
 
     # current user request to join a ride he/she has created
     def test_request_for_ride_3(self):
@@ -842,9 +896,13 @@ class TestRideMyWay(unittest.TestCase):
                                  headers={'Authorization': self.token},
                                  content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
-        """ Now let the current user request to join a ride he/she has created"""
+        """ 
+            Now let the current user request to join a 
+            ride he/she has created
+        """
         # supply right information
         response = self.app.post('{}rides/1/requests'.format(BASE_URL),
                                  # data=json.dumps(self.ride_1),
@@ -852,7 +910,9 @@ class TestRideMyWay(unittest.TestCase):
                                  content_type=content_type)
         # self.assertEqual(response_400.status_code, 400)
         self.assertEqual(response.json,
-                         {'message': 'Your can not make a ride request to a ride you created'})
+                         {'message':
+                          'Your can not make a ride request to '
+                          'a ride you created'})
 
     def test_requests_to_this_ride_1(self):
         """ View requests to a ride
@@ -895,9 +955,10 @@ class TestRideMyWay(unittest.TestCase):
                                  headers={'Authorization': self.token},
                                  content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
-        # ---------------------------------------------------------------------------------
+        # ----------------------------------------------------------------------
         """ Creating another user who will request to join a ride"""
         response = self.app.post("{}auth/signup".format(BASE_URL),
                                  data=json.dumps(self.user_2),
@@ -931,12 +992,15 @@ class TestRideMyWay(unittest.TestCase):
         # self.assertEqual(response_400.status_code, 400)
         self.assertEqual(response.json,
                          {'message':
-                          'Your request has been successfully sent and pending approval'
+                          'Your request has been successfully sent '
+                          'and pending approval'
                           })
 
         # ----------------------------------------------------------------
-        """ Let the other first user login and view requests made to the ride he/she
-        created """
+        """ Let the other first user login and view 
+            requests made to the ride he/she
+            created 
+        """
         # logging the user in
         response = self.app.post("{}auth/login".format(BASE_URL),
                                  data=json.dumps(self.login_user_1),
@@ -964,9 +1028,11 @@ class TestRideMyWay(unittest.TestCase):
                                 headers={'Authorization': self.token},
                                 content_type=content_type)
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.json, {"message":
-                                         "You don't have a ride with ride_id ({}), recheck the info and try again"
-                                         .format(2)}), 404
+        self.assertEqual(response.json,
+                         {"message":
+                          "You don't have a ride with ride_id ({}), "
+                          "recheck the info and try again"
+                          .format(2)}), 404
 
     def test_reaction_to_ride_request(self):
         """ Accept or Reject ride requests
@@ -1010,7 +1076,8 @@ class TestRideMyWay(unittest.TestCase):
                                  headers={'Authorization': self.token},
                                  content_type=content_type)
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json, {"message": "Ride create successfully"})
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
 
         # ---------------------------------------------------------------------------------
         """ Creating another user who will request to join a ride"""
@@ -1046,7 +1113,8 @@ class TestRideMyWay(unittest.TestCase):
         # self.assertEqual(response_400.status_code, 400)
         self.assertEqual(response.json,
                          {'message':
-                          'Your request has been successfully sent and pending approval'})
+                          'Your request has been successfully sent and '
+                          'pending approval'})
 
         # let the passenger try to accept or reject the request he/she
         # has created (expect an error because is not acceptable)
@@ -1061,7 +1129,8 @@ class TestRideMyWay(unittest.TestCase):
         #         })
 
         # ----------------------------------------------------------------
-        """ Let the other first user login and view requests made to the ride he/she
+        """ Let the other first user login and view 
+        requests made to the ride he/she
         created """
         # logging the user in
         response = self.app.post("{}auth/login".format(BASE_URL),
@@ -1085,7 +1154,8 @@ class TestRideMyWay(unittest.TestCase):
                                 content_type=content_type)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json,
-                         {"message": "Ride request successfully {}".format("rejected")})
+                         {"message": "Ride request successfully {}"
+                          .format("rejected")})
 
         # supply wrong key | remember right key is 'reaction'
         response = self.app.put('{}users/rides/1/reaction'.format(BASE_URL),
@@ -1095,23 +1165,27 @@ class TestRideMyWay(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json, {
                 "message":
-                "Input should be of type dictionary where key is 'reaction' and"
-                " value 'reject' or 'accept' or 'pending' set back to default"
+                "Input should be of type dictionary where key is "
+                "'reaction' and value 'reject' or 'accept' or 'pending' "
+                "set back to default"
             })
 
         # supply request id that does not exist
         response = self.app.put('{}users/rides/2/reaction'.format(BASE_URL),
                                 data=json.dumps(self.reject_request),
-                                headers={'Authorization': self.token}, content_type=content_type)
+                                headers={'Authorization': self.token},
+                                content_type=content_type)
         # self.assertEqual(response_400.status_code, 400)
         self.assertEqual(response.json, {'message': 'No request with id (2)'})
 
         # supply string as request id
         response = self.app.put('{}users/rides/kim/reaction'.format(BASE_URL),
                                 data=json.dumps(self.reject_request),
-                                headers={'Authorization': self.token}, content_type=content_type)
+                                headers={'Authorization': self.token},
+                                content_type=content_type)
         # self.assertEqual(response_400.status_code, 400)
-        self.assertEqual(response.json, {"message": "request_id should be of type integer"})
+        self.assertEqual(response.json,
+                         {"message": "request_id should be of type integer"})
         self.assertEqual(response.status_code, 400)
 
     def tearDown(self):
