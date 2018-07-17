@@ -248,6 +248,22 @@ def reaction_to_ride_request(current_user, request_id):
     return result
 
 
+@app.route('/api/v1/users/rides/<ride_id>/delete', methods=['PUT'])
+@token_required
+def delete_ride_offer(current_user, ride_id):
+    """ Deletes the ride with id provided """
+    try:
+        ride_id = int(ride_id)
+    except:
+        return jsonify({"message": "Input should be integer"}), 400
+
+    if not isinstance(ride_id, int):
+        return jsonify({"message": "Input should integer"}), 400
+
+    # call the delete_ride func to delete a ride
+    result = database_connection.delete_ride(current_user[0], ride_id)
+    return result
+
 
 
 
