@@ -338,5 +338,18 @@ def edit_ride_offer(current_user, ride_id):
     return result
 
 
+@app.route('/api/v1/rides/<request_id>/requests/cancel', methods=['DELETE'])
+@token_required
+def cancel_request(current_user, request_id):
+    """ Passenger can cancel a ride request to a ride """
+    try:
+        request_id = int(request_id)
+    except ValueError as err:
+        return jsonify(
+            {"message": "request_id should be of type integer"}
+        ), 400
+    result = database_connection.delete_request(current_user[0], request_id)
+    return result
+
 
 
