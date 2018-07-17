@@ -454,7 +454,48 @@ class DatabaseConnection(object):
             {"message":
              "You have successfully deleted a ride with ride_id {}".format(ride_id)})
 
+    def edit_ride(self,
+                  current_user,
+                  ride_id,
+                  origin,
+                  meet_point,
+                  contribution,
+                  free_spots,
+                  start_date,
+                  finish_date,
+                  terms):
+        """ Deletes the ride """
+        try:
+            # check for the presence of that ride id
+            sql = "SELECT * FROM carpool_rides WHERE id={} AND driver_id={}"\
+                .format(ride_id, current_user)
+            self.cursor.execute(sql)
+            result = self.cursor.fetchall()
+        except psycopg2.Error as err:
+            return jsonify({"message": str(err)}), 500
 
+        if not result:
+            return jsonify(
+                {"message":
+                 "You don't have a ride with ride_id ({}), recheck the info and try again"
+                 .format(ride_id)}
+            ), 404
+
+        try:
+            # check for the presence of that ride id
+            sql = "UPDATE carpool_rides " \
+                  "SET origin='{}', meet_point='{}', " \
+                  "contribution='{}', free_spots='{}', " \
+                  "start_date='{}', finish_date='{}', " \
+                  "terms='{}' WHERE id={} AND driver_id={}"\
+                .format(origin, meet_point, contribution, free_spots, start_date, finish_date, terms, ride_id, current_user)
+            self.cursor.execute(sql)
+        except psycopg2.Error as err:
+            return jsonify({"message": str(err) + " " + " Update"}), 500
+
+        return jsonify(
+            {"message":
+             "You have successfully edited a ride with ride_id {}".format(ride_id)})
 
 
 

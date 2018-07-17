@@ -248,7 +248,7 @@ def reaction_to_ride_request(current_user, request_id):
     return result
 
 
-@app.route('/api/v1/users/rides/<ride_id>/delete', methods=['PUT'])
+@app.route('/api/v1/users/rides/<ride_id>/delete', methods=['DELETE'])
 @token_required
 def delete_ride_offer(current_user, ride_id):
     """ Deletes the ride with id provided """
@@ -264,6 +264,78 @@ def delete_ride_offer(current_user, ride_id):
     result = database_connection.delete_ride(current_user[0], ride_id)
     return result
 
+
+@app.route('/api/v1/users/rides/<ride_id>/edit', methods=['PUT'])
+@token_required
+def edit_ride_offer(current_user, ride_id):
+    """ Deletes the ride with id provided """
+    try:
+        ride_id = int(ride_id)
+    except:
+        return jsonify({"message": "Input should be integer"}), 400
+
+    if not isinstance(ride_id, int):
+        return jsonify({"message": "Input should integer"}), 400
+
+    if (not request.json or
+            "terms" not in request.json or
+            "finish_date" not in request.json or
+            "start_date" not in request.json or
+            "free_spots" not in request.json or
+            "contribution" not in request.json or
+            'origin' not in request.json or
+            'destination' not in request.json or
+            "meet_point" not in request.json):
+
+        return jsonify(
+            {"message": "You have either missed out some info or used wrong keys"}
+        ), 400
+
+    origin = request.json['origin']
+    destination = request.json['destination']
+    meet_point = request.json['meet_point']
+    contribution = request.json['contribution']
+    free_spots = request.json['free_spots']
+    start_date = request.json['start_date']
+    finish_date = request.json['finish_date']
+    terms = request.json['terms']
+
+    # Checking for errors
+
+    if not isinstance(terms, str):
+        return jsonify({"message": "terms should be string"}), 400
+
+    if not isinstance(start_date, str):
+        return jsonify({"message": "Start date should be string"}), 400
+
+    if not isinstance(finish_date, str):
+        return jsonify({"message": "Finish date should be string"}), 400
+
+    if not isinstance(free_spots, int):
+        return jsonify({"message": "Free spots should be integer"}), 400
+
+    if not isinstance(origin, str):
+        return jsonify({"message": "Origin should be string"}), 400
+
+    if not isinstance(destination, str):
+        return jsonify({"message": "Destination should be string"}), 400
+
+    if not isinstance(meet_point, str):
+        return jsonify({"message": "meet_point should be string"}), 400
+
+    if not isinstance(contribution, (int, float, complex)):
+        return jsonify({"message": "contribution should be integer"}), 400
+
+    result = database_connection.edit_ride(current_user[0],
+                                           ride_id,
+                                           origin,
+                                           meet_point,
+                                           contribution,
+                                           free_spots,
+                                           start_date,
+                                           finish_date,
+                                           terms)
+    return result
 
 
 
