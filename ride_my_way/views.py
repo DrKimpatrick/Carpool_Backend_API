@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
-from ride_my_way.helpers import (token_required, test_password,
-                                 test_phone_number, test_email,
-                                 database_connection)
+from ride_my_way.views_helpers import (token_required, test_password,
+                                       test_phone_number, test_email,
+                                       database_connection)
 
 app = Flask(__name__)  # Initialising a flask application
 

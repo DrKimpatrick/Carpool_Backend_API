@@ -1,8 +1,8 @@
-import re  # # here i import the module that implements regular expressions
 from functools import wraps
 from flask import request, jsonify
 import jwt
 from ride_my_way.models import DatabaseConnection
+import re  # # here i import the module that implements regular expressions
 
 """creating an instance of the DatabaseConnections table
    used o execute run methods in the models.py
