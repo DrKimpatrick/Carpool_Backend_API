@@ -1239,6 +1239,105 @@ class TestRideMyWay(unittest.TestCase):
                           "You don't have a ride with ride_id ({}), recheck the info and try again"
                           .format(2)})
 
+    def test_cancel_request(self):
+        """ Cancel the request you've just made to a ride
+            Signup a user
+            login the user
+            Let the user create two ride offers
+
+            create another user, let the user login
+            let current login request for a ride
+            Let current login cancel a ride request
+
+         """
+        # Creating a user instance, length is one
+        response = self.app.post("{}auth/signup".format(BASE_URL),
+                                 data=json.dumps(self.user_1),
+                                 content_type=content_type)
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json,
+                         {"message": "Account successfully created"})
+
+        # logging the user in
+        response = self.app.post("{}auth/login".format(BASE_URL),
+                                 data=json.dumps(self.login_user_1),
+                                 content_type=content_type)
+        self.assertEqual(response.status_code, 200)
+
+        # capturing the token
+        self.token = response.json['Token']
+
+        """ Create a ride offer 1st"""
+        # supply right information
+        response = self.app.post('{}users/rides'.format(BASE_URL),
+                                 data=json.dumps(self.ride_1),
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json, {"message": "Ride create successfully"})
+
+        """ Create second ride offer 2nd"""
+        # supply right information
+        response = self.app.post('{}users/rides'.format(BASE_URL),
+                                 data=json.dumps(self.ride_1),
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
+
+        """ Creating another user who will request to join a ride"""
+        response = self.app.post("{}auth/signup".format(BASE_URL),
+                                 data=json.dumps(self.user_2),
+                                 content_type=content_type)
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json,
+                         {"message": "Account successfully created"})
+
+        """ Login the user who is going to request for a ride """
+        # logging the user in
+        response = self.app.post("{}auth/login".format(BASE_URL),
+                                 data=json.dumps(self.login_user_2),
+                                 content_type=content_type)
+        self.assertEqual(response.status_code, 200)
+
+        # capturing the token
+        self.token = response.json['Token']
+
+        """ Now let the user request for the first ride id=1"""
+        # supply right information
+        response = self.app.post('{}rides/1/requests'.format(BASE_URL),
+                                 # data=json.dumps(self.ride_1),
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
+        self.assertEqual(response.json,
+                         {'message':
+                          'Your request has been successfully '
+                          'sent and pending approval'})
+        self.assertEqual(response.status_code, 200)
+
+        # cancel the the ride request
+        response = self.app.delete('{}rides/1/requests/cancel'.format(BASE_URL),
+                                   headers={'Authorization': self.token},
+                                   content_type=content_type)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json,
+                         {"message":
+                          "You have successfully deleted a ride request with request_id {}".format(1)})
+
+        # trying to cancel the the ride request with non existing id
+        response = self.app.delete('{}rides/2/requests/cancel'.format(BASE_URL),
+                                   headers={'Authorization': self.token},
+                                   content_type=content_type)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json,
+                         {"message":
+                          "You don't have a ride request with request_id ({}), "
+                          "recheck the info and try again"
+                          .format(2)})
+
     def tearDown(self):
         sql_requests = "DROP TABLE IF EXISTS carpool_ride_request"
         sql_ride = "DROP TABLE IF EXISTS carpool_rides"
