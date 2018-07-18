@@ -75,7 +75,7 @@ class DatabaseConnection(object):
                     {"message": "User account with that phone number already exists"}), 406
 
     # new_user = {}
-    def signup(self, new_user={}):
+    def signup(self, new_user):
 
         # Check if username, email and phone_number don't exist
         if self.should_be_unique(new_user['username'], new_user['email'], new_user['phone_number']):
@@ -142,7 +142,7 @@ class DatabaseConnection(object):
             user_list.append(user_info)
 
         return user_list
-
+    
     def create_ride(self,
                     driver_id,
                     origin,

@@ -47,13 +47,12 @@ def create_user():
     # implement function for testing password
     if test_password(password):
         return test_password(password)
-
-    result = database_connection.signup(name,
-                                        email,  # convert back to string
-                                        username,
-                                        phone_number,
-                                        bio, gender,
-                                        password)
+    new_user = {'name': name, "email": email,
+                "username": username,
+                "phone_number": phone_number,
+                "bio": bio, "gender": gender,
+                "password": password}
+    result = database_connection.signup(new_user)
 
     return result
 
