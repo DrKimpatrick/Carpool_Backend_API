@@ -1137,6 +1137,58 @@ class TestRideMyWay(unittest.TestCase):
         for sql in sql_list:
             self.cur.cursor.execute(sql)
 
+    def test_delete_ride(self):
+        """
+            Main goal is to delete a ride offer
+            Lets create a ride offer here, first create account
+            login and create ride
+            Supply right ride data expect a success message
+        """
 
+        # Creating a user instance, length is one
+        response = self.app.post("{}auth/signup".format(BASE_URL),
+                                 data=json.dumps(self.user_1),
+                                 content_type=content_type)
 
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json,
+                         {"message": "Account successfully created"})
+
+        # logging the user in
+        response = self.app.post("{}auth/login".format(BASE_URL),
+                                 data=json.dumps(self.login_user_1),
+                                 content_type=content_type)
+        self.assertEqual(response.status_code, 200)
+
+        # capturing the token
+        self.token = response.json['Token']
+
+        # supply right information
+        response = self.app.post('{}users/rides'.format(BASE_URL),
+                                 data=json.dumps(self.ride_1),
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
+
+        # deleting the ride recently created
+        response = self.app.delete('{}users/rides/1/delete'.format(BASE_URL),
+                                   headers={'Authorization': self.token},
+                                   content_type=content_type)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json,
+                         {"message":
+                          "You have successfully deleted a ride with ride_id {}".format(1)})
+
+        # provide ride id that does not exist
+        # deleting the ride recently created
+        response = self.app.delete('{}users/rides/2/delete'.format(BASE_URL),
+                                   headers={'Authorization': self.token},
+                                   content_type=content_type)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json,
+                         {"message":
+                          "You don't have a ride with ride_id ({}), recheck the info and try again"
+                          .format(2)})
 
