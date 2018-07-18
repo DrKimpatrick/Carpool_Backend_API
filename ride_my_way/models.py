@@ -65,11 +65,14 @@ class DatabaseConnection(object):
         row = self.cursor.fetchall()
         for result in row:
             if result[0] == username:
-                return jsonify({"message": "Username already taken, try another"})
+                return jsonify(
+                    {"message": "Username already taken, try another"}), 406
             if result[1] == email:
-                return jsonify({"message": "User account with that email already exists"})
+                return jsonify(
+                    {"message": "User account with that email already exists"}), 406
             if result[2] == phone_number:
-                return jsonify({"message": "User account with that phone number already exists"})
+                return jsonify(
+                    {"message": "User account with that phone number already exists"}), 406
 
     def signup(self,
                name,
@@ -98,8 +101,8 @@ class DatabaseConnection(object):
                                  bio, gender, hashed_password)
                                 )
         except Exception as err:
-            return jsonify({"message": "Username, email or phone_number already used "})
-        return jsonify({"message": "Account successfully created"})
+            return jsonify({"message": "{}".format(str(err))}), 406
+        return jsonify({"message": "Account successfully created"}), 201
 
     def sign_in(self, username, password):
         """ A sign a web token to current user if username and password match """
@@ -119,10 +122,10 @@ class DatabaseConnection(object):
                     'exp': datetime.utcnow() + timedelta(seconds=JWT_EXP_DELTA_SECONDS)
                 }
                 token = jwt.encode(payload, JWT_SECRET, JWT_ALGORITHM)
-                return jsonify({"message": token.decode('UTF-8')})
+                return jsonify({"Token": token.decode('UTF-8')}), 200
 
         else:
-            return jsonify({"message": "Email or password is incorrect"})
+            return jsonify({"message": "Email or password is incorrect"}), 404
 
     def get_all_users(self):
         """ Returns a list of all users in the database """
@@ -176,7 +179,7 @@ class DatabaseConnection(object):
                                 )
         except psycopg2.Error as err:
             return str(err)
-        return "Ride create successfully"
+        return jsonify({"message": "Ride create successfully"}), 201
 
     def get_rides(self):
         """ Returns a list of all ride offers available """
@@ -199,7 +202,7 @@ class DatabaseConnection(object):
             ride_info['ride_id'] = ride[6]
 
             rides_list.append(ride_info)
-        return jsonify({"Rides": rides_list})
+        return jsonify({"Rides": rides_list}), 200
 
     def rides_given(self, driver_id):
         """ Returns a list of rides given by the User(Driver)"""
@@ -210,7 +213,7 @@ class DatabaseConnection(object):
             self.cursor.execute(sql)
             result = self.cursor.fetchall()
         except:
-            return jsonify({"message": "Some thing went wrong"})
+            return jsonify({"message": "Some thing went wrong"}), 500
 
         rides_list = []
         for ride in result:
@@ -253,7 +256,9 @@ class DatabaseConnection(object):
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
         if not result:
-            return jsonify({"message": "The ride offer with ride_id {} does not exist".format(ride_id)})
+            return jsonify(
+                {"message": "The ride offer with ride_id {} does not exist".format(ride_id)}
+            ), 404
 
         ride_info = {}
         for info in result:
@@ -283,9 +288,9 @@ class DatabaseConnection(object):
                 if request_info[0] == ride_id and request_info[1] == current_user:
                     return jsonify(
                         {"message": "You already made a request to that ride"}
-                    )
+                    ), 406
         except psycopg2.Error as err:
-            return jsonify({"message": str(err)})
+            return jsonify({"message": str(err)}), 500
 
         # check to see whether the current user is the author of that ride
         # Current user should not make a request to the ride he/she created
@@ -294,13 +299,13 @@ class DatabaseConnection(object):
             self.cursor.execute(sql)
             result = self.cursor.fetchall()
         except psycopg2.Error as err:
-            return jsonify({"message": "Ride_id ({}) does not exist".format(ride_id)})
+            return jsonify({"message": "Ride_id ({}) does not exist".format(ride_id)}), 404
 
         if result:
             return jsonify(
                 {"message":
                  "Your can not make a ride request to a ride you created"}
-            )
+            ), 406
 
         # Now make a request to a ride offer
         try:
@@ -308,11 +313,11 @@ class DatabaseConnection(object):
                   " VALUES(%s, %s)"
             self.cursor.execute(sql, (ride_id, current_user))
         except psycopg2.Error as err:
-            return jsonify({"message": "Ride_id ({}) does not exist".format(ride_id)})
+            return jsonify({"message": "Ride_id ({}) does not exist".format(ride_id)}), 404
         return jsonify(
             {"message":
              "Your request has been successfully sent and pending approval"}
-        )
+        ), 200
 
     def all_requests(self):
         """ Retrieves all ride requests"""
@@ -336,14 +341,14 @@ class DatabaseConnection(object):
             self.cursor.execute(sql)
             result = self.cursor.fetchall()
         except psycopg2.Error as err:
-            return jsonify({"message": str(err)})
+            return jsonify({"message": str(err)}), 500
 
         if not result:
             return jsonify(
                 {"message":
                  "You don't have a ride with ride_id ({}), recheck the info and try again"
                  .format(ride_id)}
-            )
+            ), 404
 
         try:
             # fetching data from the ride requests table where ride_id is
@@ -352,13 +357,13 @@ class DatabaseConnection(object):
             self.cursor.execute(sql)
             result = self.cursor.fetchall()
         except psycopg2.Error as err:
-            return jsonify({"message": str(err)})
+            return jsonify({"message": str(err)}), 500
 
         if not result:
             return jsonify(
                 {"message":
                  "No requests made to ride with ride_id ({})".format(ride_id)}
-            )
+            ), 404
 
         requests_list = []
         for r_request in result:
@@ -372,7 +377,7 @@ class DatabaseConnection(object):
             request_info['passenger details'] = passenger_info
             requests_list.append(request_info)
 
-        return jsonify({"Ride requests": requests_list})
+        return jsonify({"Ride requests": requests_list}), 200
 
     def respond_to_request(self,
                            current_user,
@@ -392,7 +397,7 @@ class DatabaseConnection(object):
                 {
                     "message": "No request with id ({})".format(request_id)
                 }
-            )
+            ), 404
 
         # getting the ride_id to the ride where the request is made
         # result is of length one
@@ -411,18 +416,118 @@ class DatabaseConnection(object):
                  "message":
                  "Sorry, you can only react to a ride request for the ride you created"
                 }
-            )
+            ), 406
         sql = "UPDATE carpool_ride_request SET accepted='{}' WHERE id={}"\
               .format(status, request_id)
 
         self.cursor.execute(sql)
 
-        return jsonify({"message": "Ride request successfully {}".format(status)})
+        return jsonify({"message": "Ride request successfully {}".format(status)}), 200
 
+    def delete_ride(self, current_user, ride_id):
+        """ Deletes the ride """
+        try:
+            # check for the presence of that ride id
+            sql = "SELECT * FROM carpool_rides WHERE id={} AND driver_id={}"\
+                .format(ride_id, current_user)
+            self.cursor.execute(sql)
+            result = self.cursor.fetchall()
+        except psycopg2.Error as err:
+            return jsonify({"message": str(err)}), 500
 
+        if not result:
+            return jsonify(
+                {"message":
+                 "You don't have a ride with ride_id ({}), recheck the info and try again"
+                 .format(ride_id)}
+            ), 404
 
+        try:
+            # check for the presence of that ride id
+            sql = "DELETE FROM carpool_rides WHERE id={} AND driver_id={}"\
+                .format(ride_id, current_user)
+            self.cursor.execute(sql)
+        except psycopg2.Error as err:
+            return jsonify({"message": str(err)}), 500
 
+        return jsonify(
+            {"message":
+             "You have successfully deleted a ride with ride_id {}".format(ride_id)})
 
+    def edit_ride(self,
+                  current_user,
+                  ride_id,
+                  origin,
+                  meet_point,
+                  contribution,
+                  free_spots,
+                  start_date,
+                  finish_date,
+                  terms):
+        """ Deletes the ride """
+        try:
+            # check for the presence of that ride id
+            sql = "SELECT * FROM carpool_rides WHERE id={} AND driver_id={}"\
+                .format(ride_id, current_user)
+            self.cursor.execute(sql)
+            result = self.cursor.fetchall()
+        except psycopg2.Error as err:
+            return jsonify({"message": str(err)}), 500
 
+        if not result:
+            return jsonify(
+                {"message":
+                 "You don't have a ride with ride_id ({}), recheck the info and try again"
+                 .format(ride_id)}
+            ), 404
 
+        try:
+            # check for the presence of that ride id
+            sql = "UPDATE carpool_rides " \
+                  "SET origin='{}', meet_point='{}', " \
+                  "contribution='{}', free_spots='{}', " \
+                  "start_date='{}', finish_date='{}', " \
+                  "terms='{}' WHERE id={} AND driver_id={}"\
+                .format(origin, meet_point, contribution, free_spots, start_date, finish_date, terms, ride_id, current_user)
+            self.cursor.execute(sql)
+        except psycopg2.Error as err:
+            return jsonify({"message": str(err) + " " + " Update"}), 500
 
+        return jsonify(
+            {"message":
+             "You have successfully edited a ride with ride_id {}".format(ride_id)})
+
+    def delete_request(self,
+                       current_user,
+                       request_id
+                       ):
+        """ Driver accepts or rejects a ride request in reaction to a request """
+
+        try:
+            # check for the presence of that ride id
+            sql = "SELECT * FROM carpool_ride_request WHERE id={} AND passenger_id={}"\
+                .format(request_id, current_user)
+            self.cursor.execute(sql)
+            result = self.cursor.fetchall()
+        except psycopg2.Error as err:
+            return jsonify({"message": str(err)}), 500
+
+        if not result:
+            return jsonify(
+                {"message":
+                 "You don't have a ride request with request_id ({}), "
+                 "recheck the info and try again"
+                 .format(request_id)}
+            ), 404
+
+        try:
+            # check for the presence of that ride id
+            sql = "DELETE FROM carpool_ride_request WHERE id={} AND passenger_id={}"\
+                .format(request_id, current_user)
+            self.cursor.execute(sql)
+        except psycopg2.Error as err:
+            return jsonify({"message": str(err)}), 500
+
+        return jsonify(
+            {"message":
+             "You have successfully deleted a ride request with request_id {}".format(request_id)})
