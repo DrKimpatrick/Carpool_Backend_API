@@ -142,16 +142,9 @@ class DatabaseConnection(object):
             user_list.append(user_info)
 
         return user_list
-    
-    def create_ride(self,
-                    driver_id,
-                    origin,
-                    meet_point,
-                    contribution,
-                    free_spots,
-                    start_date,
-                    finish_date
-                    ):
+
+    # new_ride = {}
+    def create_ride(self, new_ride):
         """ Creates ride offer in the database
             The driver_id which is a foreign key is gotten from
             the current_user instance in the token_required()
@@ -167,8 +160,10 @@ class DatabaseConnection(object):
                                              "VALUES (%s, %s, %s, %s, %s, %s, %s)"
             self.cursor.execute(
                                 sql,
-                                (driver_id, origin, meet_point, contribution,
-                                 free_spots, start_date, finish_date)
+                                (new_ride['driver_id'], new_ride['origin'],
+                                 new_ride['meet_point'], new_ride['contribution'],
+                                 new_ride['free_spots'], new_ride['start_date'],
+                                 new_ride['finish_date'])
                                 )
         except psycopg2.Error as err:
             return str(err)

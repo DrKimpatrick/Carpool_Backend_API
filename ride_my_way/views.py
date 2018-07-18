@@ -140,12 +140,11 @@ def create_ride(current_user):
     if not isinstance(contribution, (int, float, complex)):
         return jsonify({"message": "contribution should be integer"}), 400
 
-    result = database_connection.create_ride(current_user[0],
-                                             origin, meet_point,
-                                             contribution,
-                                             free_spots,
-                                             start_date,
-                                             finish_date)
+    new_ride = {"driver_id": current_user[0], "origin": origin,
+                "meet_point": meet_point, "contribution": contribution,
+                "free_spots": free_spots, "start_date": start_date,
+                "finish_date": finish_date}
+    result = database_connection.create_ride(new_ride)
     return result
 
 
