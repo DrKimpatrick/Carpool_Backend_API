@@ -74,22 +74,15 @@ class DatabaseConnection(object):
                 return jsonify(
                     {"message": "User account with that phone number already exists"}), 406
 
-    def signup(self,
-               name,
-               email,
-               username,
-               phone_number,
-               bio,
-               gender,
-               password
-               ):
+    # new_user = {}
+    def signup(self, new_user={}):
 
         # Check if username, email and phone_number don't exist
-        if self.should_be_unique(username, email, phone_number):
-            return self.should_be_unique(username, email, phone_number)
+        if self.should_be_unique(new_user['username'], new_user['email'], new_user['phone_number']):
+            return self.should_be_unique(new_user['username'], new_user['email'], new_user['phone_number'])
 
         # hashing the password
-        hashed_password = generate_password_hash(password, method="sha256")
+        hashed_password = generate_password_hash(new_user['password'], method="sha256")
 
         # inserting user info into the carpool_users table
         try:
@@ -97,8 +90,8 @@ class DatabaseConnection(object):
                   "phone_number, bio, gender, password) " \
                   "VALUES (%s, %s, %s, %s, %s, %s, %s)"
             self.cursor.execute(sql,
-                                (name, email, username, phone_number,
-                                 bio, gender, hashed_password)
+                                (new_user['name'], new_user['email'], new_user['username'], new_user['phone_number'],
+                                 new_user['bio'], new_user['gender'], hashed_password)
                                 )
         except Exception as err:
             return jsonify({"message": "{}".format(str(err))}), 406
