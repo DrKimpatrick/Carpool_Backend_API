@@ -1128,15 +1128,6 @@ class TestRideMyWay(unittest.TestCase):
                          {"message": "request_id should be of type integer"})
         self.assertEqual(response.status_code, 400)
 
-    def tearDown(self):
-        sql_requests = "DROP TABLE IF EXISTS carpool_ride_request"
-        sql_ride = "DROP TABLE IF EXISTS carpool_rides"
-        sql = "DROP TABLE IF EXISTS carpool_users"
-
-        sql_list = [sql_requests, sql_ride, sql]
-        for sql in sql_list:
-            self.cur.cursor.execute(sql)
-
     def test_delete_ride(self):
         """
             Main goal is to delete a ride offer
@@ -1191,4 +1182,73 @@ class TestRideMyWay(unittest.TestCase):
                          {"message":
                           "You don't have a ride with ride_id ({}), recheck the info and try again"
                           .format(2)})
+
+    def test_edit_ride(self):
+        """
+            Main goal is to edit a ride offer
+            Lets create a ride offer here, first create account
+            login and create ride
+            Supply right ride data expect a success message
+        """
+
+        # Creating a user instance, length is one
+        response = self.app.post("{}auth/signup".format(BASE_URL),
+                                 data=json.dumps(self.user_1),
+                                 content_type=content_type)
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json,
+                         {"message": "Account successfully created"})
+
+        # logging the user in
+        response = self.app.post("{}auth/login".format(BASE_URL),
+                                 data=json.dumps(self.login_user_1),
+                                 content_type=content_type)
+        self.assertEqual(response.status_code, 200)
+
+        # capturing the token
+        self.token = response.json['Token']
+
+        # supply right information
+        response = self.app.post('{}users/rides'.format(BASE_URL),
+                                 data=json.dumps(self.ride_1),
+                                 headers={'Authorization': self.token},
+                                 content_type=content_type)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json,
+                         {"message": "Ride create successfully"})
+
+        # editing the ride recently created
+        response = self.app.put('{}users/rides/1/edit'.format(BASE_URL),
+                                data=json.dumps(self.ride_2),
+                                headers={'Authorization': self.token},
+                                content_type=content_type)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json,
+                         {"message":
+                          "You have successfully edited a ride with ride_id {}".format(1)})
+
+        # editing the ride recently created but providing none existing id
+        response = self.app.put('{}users/rides/2/edit'.format(BASE_URL),
+                                data=json.dumps(self.ride_2),
+                                headers={'Authorization': self.token},
+                                content_type=content_type)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json,
+                         {"message":
+                          "You don't have a ride with ride_id ({}), recheck the info and try again"
+                          .format(2)})
+
+    def tearDown(self):
+        sql_requests = "DROP TABLE IF EXISTS carpool_ride_request"
+        sql_ride = "DROP TABLE IF EXISTS carpool_rides"
+        sql = "DROP TABLE IF EXISTS carpool_users"
+
+        sql_list = [sql_requests, sql_ride, sql]
+        for sql in sql_list:
+            self.cur.cursor.execute(sql)
+
+
+
+
 
