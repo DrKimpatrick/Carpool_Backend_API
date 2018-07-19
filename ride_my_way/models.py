@@ -442,21 +442,13 @@ class DatabaseConnection(object):
             {"message":
              "You have successfully deleted a ride with ride_id {}".format(ride_id)})
 
-    def edit_ride(self,
-                  current_user,
-                  ride_id,
-                  origin,
-                  meet_point,
-                  contribution,
-                  free_spots,
-                  start_date,
-                  finish_date,
-                  terms):
+    # edit_ride = {}
+    def edit_ride(self, edit_ride):
         """ Deletes the ride """
         try:
             # check for the presence of that ride id
             sql = "SELECT * FROM carpool_rides WHERE id={} AND driver_id={}"\
-                .format(ride_id, current_user)
+                .format(edit_ride['ride_id'], edit_ride['current_user'])
             self.cursor.execute(sql)
             result = self.cursor.fetchall()
         except psycopg2.Error as err:
@@ -466,7 +458,7 @@ class DatabaseConnection(object):
             return jsonify(
                 {"message":
                  "You don't have a ride with ride_id ({}), recheck the info and try again"
-                 .format(ride_id)}
+                 .format(edit_ride['ride_id'])}
             ), 404
 
         try:
@@ -476,14 +468,18 @@ class DatabaseConnection(object):
                   "contribution='{}', free_spots='{}', " \
                   "start_date='{}', finish_date='{}', " \
                   "terms='{}' WHERE id={} AND driver_id={}"\
-                .format(origin, meet_point, contribution, free_spots, start_date, finish_date, terms, ride_id, current_user)
+                .format(edit_ride['origin'], edit_ride['meet_point'],
+                        edit_ride['contribution'], edit_ride['free_spots'],
+                        edit_ride['start_date'], edit_ride['finish_date'],
+                        edit_ride['terms'], edit_ride['ride_id'],
+                        edit_ride['current_user'])
             self.cursor.execute(sql)
         except psycopg2.Error as err:
             return jsonify({"message": str(err) + " " + " Update"}), 500
 
         return jsonify(
             {"message":
-             "You have successfully edited a ride with ride_id {}".format(ride_id)})
+             "You have successfully edited a ride with ride_id {}".format(edit_ride['ride_id'])})
 
     def delete_request(self,
                        current_user,
