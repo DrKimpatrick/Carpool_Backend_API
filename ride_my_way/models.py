@@ -74,22 +74,15 @@ class DatabaseConnection(object):
                 return jsonify(
                     {"message": "User account with that phone number already exists"}), 406
 
-    def signup(self,
-               name,
-               email,
-               username,
-               phone_number,
-               bio,
-               gender,
-               password
-               ):
+    # new_user = {}
+    def signup(self, new_user):
 
         # Check if username, email and phone_number don't exist
-        if self.should_be_unique(username, email, phone_number):
-            return self.should_be_unique(username, email, phone_number)
+        if self.should_be_unique(new_user['username'], new_user['email'], new_user['phone_number']):
+            return self.should_be_unique(new_user['username'], new_user['email'], new_user['phone_number'])
 
         # hashing the password
-        hashed_password = generate_password_hash(password, method="sha256")
+        hashed_password = generate_password_hash(new_user['password'], method="sha256")
 
         # inserting user info into the carpool_users table
         try:
@@ -97,8 +90,8 @@ class DatabaseConnection(object):
                   "phone_number, bio, gender, password) " \
                   "VALUES (%s, %s, %s, %s, %s, %s, %s)"
             self.cursor.execute(sql,
-                                (name, email, username, phone_number,
-                                 bio, gender, hashed_password)
+                                (new_user['name'], new_user['email'], new_user['username'], new_user['phone_number'],
+                                 new_user['bio'], new_user['gender'], hashed_password)
                                 )
         except Exception as err:
             return jsonify({"message": "{}".format(str(err))}), 406
@@ -150,15 +143,8 @@ class DatabaseConnection(object):
 
         return user_list
 
-    def create_ride(self,
-                    driver_id,
-                    origin,
-                    meet_point,
-                    contribution,
-                    free_spots,
-                    start_date,
-                    finish_date
-                    ):
+    # new_ride = {}
+    def create_ride(self, new_ride):
         """ Creates ride offer in the database
             The driver_id which is a foreign key is gotten from
             the current_user instance in the token_required()
@@ -174,8 +160,10 @@ class DatabaseConnection(object):
                                              "VALUES (%s, %s, %s, %s, %s, %s, %s)"
             self.cursor.execute(
                                 sql,
-                                (driver_id, origin, meet_point, contribution,
-                                 free_spots, start_date, finish_date)
+                                (new_ride['driver_id'], new_ride['origin'],
+                                 new_ride['meet_point'], new_ride['contribution'],
+                                 new_ride['free_spots'], new_ride['start_date'],
+                                 new_ride['finish_date'])
                                 )
         except psycopg2.Error as err:
             return str(err)
@@ -454,21 +442,13 @@ class DatabaseConnection(object):
             {"message":
              "You have successfully deleted a ride with ride_id {}".format(ride_id)})
 
-    def edit_ride(self,
-                  current_user,
-                  ride_id,
-                  origin,
-                  meet_point,
-                  contribution,
-                  free_spots,
-                  start_date,
-                  finish_date,
-                  terms):
+    # edit_ride = {}
+    def edit_ride(self, edit_ride):
         """ Deletes the ride """
         try:
             # check for the presence of that ride id
             sql = "SELECT * FROM carpool_rides WHERE id={} AND driver_id={}"\
-                .format(ride_id, current_user)
+                .format(edit_ride['ride_id'], edit_ride['current_user'])
             self.cursor.execute(sql)
             result = self.cursor.fetchall()
         except psycopg2.Error as err:
@@ -478,7 +458,7 @@ class DatabaseConnection(object):
             return jsonify(
                 {"message":
                  "You don't have a ride with ride_id ({}), recheck the info and try again"
-                 .format(ride_id)}
+                 .format(edit_ride['ride_id'])}
             ), 404
 
         try:
@@ -488,14 +468,18 @@ class DatabaseConnection(object):
                   "contribution='{}', free_spots='{}', " \
                   "start_date='{}', finish_date='{}', " \
                   "terms='{}' WHERE id={} AND driver_id={}"\
-                .format(origin, meet_point, contribution, free_spots, start_date, finish_date, terms, ride_id, current_user)
+                .format(edit_ride['origin'], edit_ride['meet_point'],
+                        edit_ride['contribution'], edit_ride['free_spots'],
+                        edit_ride['start_date'], edit_ride['finish_date'],
+                        edit_ride['terms'], edit_ride['ride_id'],
+                        edit_ride['current_user'])
             self.cursor.execute(sql)
         except psycopg2.Error as err:
             return jsonify({"message": str(err) + " " + " Update"}), 500
 
         return jsonify(
             {"message":
-             "You have successfully edited a ride with ride_id {}".format(ride_id)})
+             "You have successfully edited a ride with ride_id {}".format(edit_ride['ride_id'])})
 
     def delete_request(self,
                        current_user,

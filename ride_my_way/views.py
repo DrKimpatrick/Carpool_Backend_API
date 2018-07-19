@@ -47,13 +47,12 @@ def create_user():
     # implement function for testing password
     if test_password(password):
         return test_password(password)
-
-    result = database_connection.signup(name,
-                                        email,  # convert back to string
-                                        username,
-                                        phone_number,
-                                        bio, gender,
-                                        password)
+    new_user = {'name': name, "email": email,
+                "username": username,
+                "phone_number": phone_number,
+                "bio": bio, "gender": gender,
+                "password": password}
+    result = database_connection.signup(new_user)
 
     return result
 
@@ -141,12 +140,11 @@ def create_ride(current_user):
     if not isinstance(contribution, (int, float, complex)):
         return jsonify({"message": "contribution should be integer"}), 400
 
-    result = database_connection.create_ride(current_user[0],
-                                             origin, meet_point,
-                                             contribution,
-                                             free_spots,
-                                             start_date,
-                                             finish_date)
+    new_ride = {"driver_id": current_user[0], "origin": origin,
+                "meet_point": meet_point, "contribution": contribution,
+                "free_spots": free_spots, "start_date": start_date,
+                "finish_date": finish_date}
+    result = database_connection.create_ride(new_ride)
     return result
 
 
@@ -326,15 +324,16 @@ def edit_ride_offer(current_user, ride_id):
     if not isinstance(contribution, (int, float, complex)):
         return jsonify({"message": "contribution should be integer"}), 400
 
-    result = database_connection.edit_ride(current_user[0],
-                                           ride_id,
-                                           origin,
-                                           meet_point,
-                                           contribution,
-                                           free_spots,
-                                           start_date,
-                                           finish_date,
-                                           terms)
+    edit_ride = {"current_user": current_user[0],
+                 "ride_id": ride_id,
+                 "origin": origin,
+                 "meet_point": meet_point,
+                 "contribution": contribution,
+                 "free_spots": free_spots,
+                 "start_date": start_date,
+                 "finish_date": finish_date,
+                 "terms": terms}
+    result = database_connection.edit_ride(edit_ride)
     return result
 
 
