@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
-from ride_my_way.views_helpers import (token_required, test_password,
-                                       test_phone_number, test_email,
+from ride_my_way.views_helpers import (token_required,
+                                       check_user_field_type,
+                                       check_user_fields,
+                                       generate_user_field_dict,
                                        database_connection)
 
 app = Flask(__name__)  # Initialising a flask application
@@ -11,47 +13,25 @@ def create_user():
     """ Creating a user account
         calls the signup() func in models.py
     """
+    # check that there are no missed out info or used wrong keys
+    if check_user_fields():
+        return check_user_fields()
 
-    if (not request.json or
-            "name" not in request.json or
-            "email" not in request.json or
-            "username" not in request.json or
-            "phone_number" not in request.json or
-            "bio" not in request.json or
-            "gender" not in request.json or
-            "password" not in request.json):
+    # keep all the user fields in a dictionary
+    user_fields = generate_user_field_dict()
 
-        return jsonify(
-            {"message": "You have either missed out some info or used wrong keys"}
-        ), 400
+    # check that information is not invalid
+    if check_user_field_type(user_fields):
+        return check_user_field_type(user_fields)
 
-    name = request.json["name"]
-    email = request.json['email']
-    username = request.json['username']
-    phone_number = request.json['phone_number']
-    bio = request.json['bio']
-    gender = request.json['gender']
-    password = request.json['password']
+    new_user = {'name': user_fields['name'],
+                "email": user_fields['email'],
+                "username": user_fields['username'],
+                "phone_number": user_fields['phone_number'],
+                "bio": user_fields['bio'],
+                "gender": user_fields['gender'],
+                "password": user_fields['password']}
 
-    """ 
-        implement function for testing email
-        function only returns an error if any
-    """
-    if test_email(email):
-        return test_email(email)
-
-    # implement function for testing phone number
-    if test_phone_number(phone_number):
-        return test_phone_number(phone_number)
-
-    # implement function for testing password
-    if test_password(password):
-        return test_password(password)
-    new_user = {'name': name, "email": email,
-                "username": username,
-                "phone_number": phone_number,
-                "bio": bio, "gender": gender,
-                "password": password}
     result = database_connection.signup(new_user)
 
     return result
@@ -309,75 +289,27 @@ def delete_ride_offer(current_user, ride_id):
 @token_required
 def edit_ride_offer(current_user, ride_id):
     """ Deletes the ride with id provided """
-    try:
-        ride_id = int(ride_id)
-    except:
-        return jsonify({"message": "Input should be integer"}), 400
 
-    if not isinstance(ride_id, int):
-        return jsonify({"message": "Input should integer"}), 400
-
+    # check that there are no missed out info or used wrong keys
     if check_ride_fields():
         return check_ride_fields()
 
-    """    if (not request.json or
-            "terms" not in request.json or
-            "finish_date" not in request.json or
-            "start_date" not in request.json or
-            "free_spots" not in request.json or
-            "contribution" not in request.json or
-            'origin' not in request.json or
-            'destination' not in request.json or
-            "meet_point" not in request.json):
+    # keep all the ride fields in a dictionary
+    ride_fields = generate_ride_field_dict()
 
-        return jsonify(
-            {"message": "You have either missed out some info or used wrong keys"}
-        ), 400
-"""
-    origin = request.json['origin']
-    destination = request.json['destination']
-    meet_point = request.json['meet_point']
-    contribution = request.json['contribution']
-    free_spots = request.json['free_spots']
-    start_date = request.json['start_date']
-    finish_date = request.json['finish_date']
-    terms = request.json['terms']
-
-    # Checking for errors
-
-    if not isinstance(terms, str):
-        return jsonify({"message": "terms should be string"}), 400
-
-    if not isinstance(start_date, str):
-        return jsonify({"message": "Start date should be string"}), 400
-
-    if not isinstance(finish_date, str):
-        return jsonify({"message": "Finish date should be string"}), 400
-
-    if not isinstance(free_spots, int):
-        return jsonify({"message": "Free spots should be integer"}), 400
-
-    if not isinstance(origin, str):
-        return jsonify({"message": "Origin should be string"}), 400
-
-    if not isinstance(destination, str):
-        return jsonify({"message": "Destination should be string"}), 400
-
-    if not isinstance(meet_point, str):
-        return jsonify({"message": "meet_point should be string"}), 400
-
-    if not isinstance(contribution, (int, float, complex)):
-        return jsonify({"message": "contribution should be integer"}), 400
+    # Checking for errors linked to the input type
+    if check_ride_field_type(ride_fields):
+        return check_ride_field_type(ride_fields)
 
     edit_ride = {"current_user": current_user[0],
                  "ride_id": ride_id,
-                 "origin": origin,
-                 "meet_point": meet_point,
-                 "contribution": contribution,
-                 "free_spots": free_spots,
-                 "start_date": start_date,
-                 "finish_date": finish_date,
-                 "terms": terms}
+                 "origin": ride_fields['origin'],
+                 "meet_point": ride_fields['meet_point'],
+                 "contribution": ride_fields['contribution'],
+                 "free_spots": ride_fields['free_spots'],
+                 "start_date": ride_fields['start_date'],
+                 "finish_date": ride_fields['finish_date'],
+                 "terms": ride_fields['terms']}
     result = database_connection.edit_ride(edit_ride)
     return result
 
