@@ -1,11 +1,9 @@
-from flask import Flask, request, jsonify
-from ride_my_way.views_helpers import (token_required,
-                                       check_user_field_type,
-                                       check_user_fields,
-                                       generate_user_field_dict,
-                                       database_connection)
-
-app = Flask(__name__)  # Initialising a flask application
+from ride_my_way import app, database_connection
+from flask import request, jsonify
+from ride_my_way.views.views_helpers import token_required
+from ride_my_way.views.users_helper import (check_user_field_type,
+                                            check_user_fields,
+                                            generate_user_field_dict)
 
 
 @app.route('/api/v1/auth/signup', methods=['POST'])

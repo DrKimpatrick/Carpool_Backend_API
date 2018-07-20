@@ -1,6 +1,6 @@
 import psycopg2
 from werkzeug.security import generate_password_hash, check_password_hash
-from ride_my_way.database_tables import tables_list  # has the sql for table creation
+from ride_my_way.models.database_tables import tables_list
 import jwt
 from flask import jsonify
 import os
