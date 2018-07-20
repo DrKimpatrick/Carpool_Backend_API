@@ -86,11 +86,14 @@ def list_of_users(current_user):
     return jsonify({"Users": result})
 
 
-@app.route('/api/v1/users/rides', methods=['POST'])
-@token_required
-def create_ride(current_user):
-    """ Creating a ride offer """
+# check that all input fields are available
+def check_ride_fields():
+    """ Ensure that all fields are available
+        and wrong keys are not provided
 
+        It is a helper function that is called in
+        create ride and edit ride | all provide the same fields
+    """
     if (not request.json or
             "terms" not in request.json or
             "finish_date" not in request.json or
@@ -105,6 +108,12 @@ def create_ride(current_user):
             {"message": "You have either missed out some info or used wrong keys"}
         ), 400
 
+
+# get ride fields
+def generate_ride_field_dict():
+    """ Keep all the ride info in the dictionary
+        Is input for check_ride_field_type helper func
+    """
     origin = request.json['origin']
     destination = request.json['destination']
     meet_point = request.json['meet_point']
@@ -114,36 +123,69 @@ def create_ride(current_user):
     finish_date = request.json['finish_date']
     terms = request.json['terms']
 
-    # Checking for errors
+    ride_fields = {"origin": origin, "destination": destination,
+                   "meet_point": meet_point, "contribution": contribution,
+                   "free_spots": free_spots, "start_date": start_date,
+                   "finish_date": finish_date, "terms": terms
+                   }
 
-    if not isinstance(terms, str):
+    return ride_fields
+
+
+# check ride field types
+def check_ride_field_type(ride_fields):
+    """ Checks the type of the ride field inputs
+        Take in the the ride fields as a dictionary
+    """
+
+    if not isinstance(ride_fields['terms'], str):
         return jsonify({"message": "terms should be string"}), 400
 
-    if not isinstance(start_date, str):
+    if not isinstance(ride_fields['start_date'], str):
         return jsonify({"message": "Start date should be string"}), 400
 
-    if not isinstance(finish_date, str):
+    if not isinstance(ride_fields['finish_date'], str):
         return jsonify({"message": "Finish date should be string"}), 400
 
-    if not isinstance(free_spots, int):
+    if not isinstance(ride_fields['free_spots'], int):
         return jsonify({"message": "Free spots should be integer"}), 400
 
-    if not isinstance(origin, str):
+    if not isinstance(ride_fields['origin'], str):
         return jsonify({"message": "Origin should be string"}), 400
 
-    if not isinstance(destination, str):
+    if not isinstance(ride_fields['destination'], str):
         return jsonify({"message": "Destination should be string"}), 400
 
-    if not isinstance(meet_point, str):
+    if not isinstance(ride_fields['meet_point'], str):
         return jsonify({"message": "meet_point should be string"}), 400
 
-    if not isinstance(contribution, (int, float, complex)):
+    if not isinstance(ride_fields['contribution'], (int, float, complex)):
         return jsonify({"message": "contribution should be integer"}), 400
 
-    new_ride = {"driver_id": current_user[0], "origin": origin,
-                "meet_point": meet_point, "contribution": contribution,
-                "free_spots": free_spots, "start_date": start_date,
-                "finish_date": finish_date}
+
+@app.route('/api/v1/users/rides', methods=['POST'])
+@token_required
+def create_ride(current_user):
+    """ Creating a ride offer """
+
+    # check that there are no missed out info or used wrong keys
+    if check_ride_fields():
+        return check_ride_fields()
+
+    # keep all the ride fields in a dictionary
+    ride_fields = generate_ride_field_dict()
+
+    # Checking for errors linked to the input type
+    if check_ride_field_type(ride_fields):
+        return check_ride_field_type(ride_fields)
+
+    new_ride = {"driver_id": current_user[0],
+                "origin": ride_fields['origin'],
+                "meet_point": ride_fields['meet_point'],
+                "contribution": ride_fields['contribution'],
+                "free_spots": ride_fields['free_spots'],
+                "start_date": ride_fields['start_date'],
+                "finish_date": ride_fields['finish_date']}
     result = database_connection.create_ride(new_ride)
     return result
 
@@ -275,7 +317,10 @@ def edit_ride_offer(current_user, ride_id):
     if not isinstance(ride_id, int):
         return jsonify({"message": "Input should integer"}), 400
 
-    if (not request.json or
+    if check_ride_fields():
+        return check_ride_fields()
+
+    """    if (not request.json or
             "terms" not in request.json or
             "finish_date" not in request.json or
             "start_date" not in request.json or
@@ -288,7 +333,7 @@ def edit_ride_offer(current_user, ride_id):
         return jsonify(
             {"message": "You have either missed out some info or used wrong keys"}
         ), 400
-
+"""
     origin = request.json['origin']
     destination = request.json['destination']
     meet_point = request.json['meet_point']
