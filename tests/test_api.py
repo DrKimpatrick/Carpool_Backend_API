@@ -1,4 +1,4 @@
-from ride_my_way import views_helpers, views  # has the app initialized
+from ride_my_way import database_connection, app
 import unittest
 import json
 import jwt
@@ -24,10 +24,9 @@ class TestRideMyWay(unittest.TestCase):
                 """
 
     def setUp(self):
-        # views.app.config['TESTING'] = True
-        self.app = views.app.test_client()
-        self.cur = views_helpers.database_connection
-        views_helpers.database_connection.create_tables()
+        self.app = app.test_client()
+        self.cur = database_connection
+        self.cur.create_tables()
 
         # --------***** Creating users ********------------------
 
