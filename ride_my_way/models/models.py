@@ -180,16 +180,16 @@ class DatabaseConnection(object):
         rides_list = []
         for ride in result:
 
-            ride_info = {}
-            ride_info['origin'] = ride[0]
-            ride_info['meet_point'] = ride[1]
-            ride_info['contribution'] = ride[2]
-            ride_info['free_spots'] = ride[3]
-            ride_info['start_date'] = ride[4]
-            ride_info['finish_date'] = ride[5]
-            ride_info['ride_id'] = ride[6]
+            ride_info_dict = {}
+            ride_info_dict['origin'] = ride[0]
+            ride_info_dict['meet_point'] = ride[1]
+            ride_info_dict['contribution'] = ride[2]
+            ride_info_dict['free_spots'] = ride[3]
+            ride_info_dict['start_date'] = ride[4]
+            ride_info_dict['finish_date'] = ride[5]
+            ride_info_dict['ride_id'] = ride[6]
 
-            rides_list.append(ride_info)
+            rides_list.append(ride_info_dict)
         return jsonify({"Rides": rides_list}), 200
 
     def rides_given(self, driver_id):
@@ -248,21 +248,21 @@ class DatabaseConnection(object):
                 {"message": "The ride offer with ride_id {} does not exist".format(ride_id)}
             ), 404
 
-        ride_info = {}
+        ride_info_detail = {}
         for info in result:
             # driver information to be returned with rides details
             driver_id = info[6]
             driver_info = self.get_user_info(driver_id)
-            ride_info['Driver details'] = driver_info
+            ride_info_detail['Driver details'] = driver_info
 
-            ride_info['origin'] = info[0]
-            ride_info['meet_point'] = info[1]
-            ride_info['contribution'] = info[2]
-            ride_info['free_spots'] = info[3]
-            ride_info['start_date'] = info[4]
-            ride_info['finish_date'] = info[5]
+            ride_info_detail['origin'] = info[0]
+            ride_info_detail['meet_point'] = info[1]
+            ride_info_detail['contribution'] = info[2]
+            ride_info_detail['free_spots'] = info[3]
+            ride_info_detail['start_date'] = info[4]
+            ride_info_detail['finish_date'] = info[5]
 
-        return jsonify({"Ride details": ride_info})
+        return jsonify({"Ride details": ride_info_detail})
 
     def request_ride(self, current_user, ride_id):
         """ Post a request for a ride by providing the ride id"""
