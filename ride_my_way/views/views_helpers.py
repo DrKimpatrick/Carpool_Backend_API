@@ -3,10 +3,6 @@ from flask import request, jsonify
 import jwt
 from ride_my_way import database_connection
 
-# from flask import Flask
-
-# app = Flask(__name__)
-
 
 """ Variable for encoding and decoding web token """
 JWT_SECRET = 'secret'

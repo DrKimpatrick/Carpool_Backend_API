@@ -1,6 +1,7 @@
 from ride_my_way import app, database_connection
 from flask import jsonify, request
 from ride_my_way.views.views_helpers import token_required
+from ride_my_way.views.ride_requests_helper import reaction_status
 
 
 @app.route('/api/v1/rides/<ride_id>/requests', methods=['POST'])
@@ -57,15 +58,12 @@ def reaction_to_ride_request(current_user, request_id):
         ), 400
 
     status = request.json['reaction']
-    # changing the status of a request
-    if status == 'reject':
-        status = 'rejected'
-    if status == 'accept':
-        status = 'accepted'
-    if status == 'pending':
-        status = 'pending'
 
-    result = database_connection.respond_to_request(current_user[0], request_id, status)
+    # Call a helper function to dictate a storage value
+    # provide status to be stored in the db
+    new_status = reaction_status(status)
+
+    result = database_connection.respond_to_request(current_user[0], request_id, new_status)
     return result
 
 
