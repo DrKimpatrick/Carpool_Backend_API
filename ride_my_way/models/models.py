@@ -367,11 +367,7 @@ class DatabaseConnection(object):
 
         return jsonify({"Ride requests": requests_list}), 200
 
-    def respond_to_request(self,
-                           current_user,
-                           request_id,
-                           status
-                           ):
+    def respond_to_request(self, current_user, request_id, status):
         """ Driver accepts or rejects a ride request in reaction to a request """
 
         # check for the presence of that request id
