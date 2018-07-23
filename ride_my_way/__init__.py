@@ -1,7 +1,9 @@
 from flask import Flask
 from ride_my_way.models import DbClass
+from flask_cors import CORS
 
 app = Flask(__name__)  # Initialising a flask application
+CORS(app)
 
 """creating an instance of the DatabaseConnections table
    used o execute run methods in the models.py

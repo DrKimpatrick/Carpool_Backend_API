@@ -61,5 +61,5 @@ def login():
 def list_of_users(current_user):
     """ Get all users"""
     result = database_connection.get_all_users()
-    return jsonify({"Users": result})
+    return jsonify({"Users": result}), 200
 
