@@ -101,3 +101,21 @@ class Users(DatabaseConnection):
             user_list.append(user_info)
 
         return user_list
+
+    def get_user_info_users(self, user_id):
+        """ Gets the info of the user with the user_id provided"""
+
+        sql = "SELECT username, phone_number, gender, email " \
+              "FROM carpool_users WHERE id=%s" % user_id
+
+        self.cursor.execute(sql)
+        result = self.cursor.fetchall()
+
+        user = {}  # holds user information
+        for user_info in result:
+            user['username'] = user_info[0]
+            user['phone_number'] = user_info[1]
+            user['gender'] = user_info[2]
+            user['email'] = user_info[3]
+
+        return jsonify({"User_info": user})

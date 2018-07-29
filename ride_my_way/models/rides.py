@@ -16,14 +16,15 @@ class Rides(DatabaseConnection):
                   "meet_point, " \
                   "contribution, " \
                   "free_spots, start_date, " \
-                  "finish_date) " \
-                  "VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                  "finish_date, destination, terms) " \
+                  "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
             self.cursor.execute(
                 sql,
                 (new_ride['driver_id'], new_ride['origin'],
                  new_ride['meet_point'], new_ride['contribution'],
                  new_ride['free_spots'], new_ride['start_date'],
-                 new_ride['finish_date'])
+                 new_ride['finish_date'], new_ride['destination'],
+                 new_ride['terms'])
             )
         except psycopg2.Error as err:
             return str(err)

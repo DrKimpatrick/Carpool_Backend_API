@@ -63,3 +63,11 @@ def list_of_users(current_user):
     result = database_connection.get_all_users()
     return jsonify({"Users": result}), 200
 
+
+@app.route('/api/v1/current/user/info', methods=['GET'])
+@token_required
+def current_user_info(current_user):
+    """ Get all users"""
+    result = database_connection.get_user_info_users(current_user[0])
+    return result
+

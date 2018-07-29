@@ -28,7 +28,9 @@ def create_ride(current_user):
                 "contribution": ride_fields['contribution'],
                 "free_spots": ride_fields['free_spots'],
                 "start_date": ride_fields['start_date'],
-                "finish_date": ride_fields['finish_date']}
+                "finish_date": ride_fields['finish_date'],
+                "destination": ride_fields['destination'],
+                "terms": ride_fields['terms']}
     result = database_connection.create_ride(new_ride)
     return result
 
