@@ -41,18 +41,24 @@ def login():
         It login s in the user by providing a web token
     """
 
-    if (not request.json or
-            "username" not in request.json or
-            "password" not in request.json):
+    if not request.json or "password" not in request.json:
         return jsonify(
             {"message": "You have either missed out some info or used wrong keys"}
         ), 400
 
-    username = request.json['username']
+    username_or_email = ''
+    if "username" in request.json or "email" in request.json:
+        if "username" in request.json:
+            username_or_email += request.json['username']
+        else:
+            username_or_email += request.json['email']
+    else:
+        return jsonify({"message": "some thing went wrong"})
+
     password = request.json['password']
 
     # sign_in now
-    result = database_connection.sign_in(username, password)
+    result = database_connection.sign_in(username_or_email, password)
     return result
 
 

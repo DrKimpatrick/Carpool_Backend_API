@@ -56,11 +56,13 @@ class Users(DatabaseConnection):
             return jsonify({"message": "{}".format(str(err))}), 406
         return jsonify({"message": "Account successfully created"}), 201
 
-    def sign_in(self, username, password):
-        """ A sign a web token to current user if username and password match """
+    def sign_in(self, username_or_email, password):
+        """ A sign a web token to current user if username and password match
+            sign in with a username or email
+        """
         try:
             # query the user table for the username and password
-            select_query = "SELECT username, password, id FROM carpool_users"
+            select_query = "SELECT username, password, id, email FROM carpool_users"
             self.cursor.execute(select_query)
             result = self.cursor.fetchall()
         except Exception as err:
@@ -68,7 +70,8 @@ class Users(DatabaseConnection):
 
         # assigning a web token if info right
         for user_info in result:
-            if user_info[0] == username and check_password_hash(user_info[1], password):
+            if (user_info[0] == username_or_email and check_password_hash(user_info[1], password)  # username
+                  or user_info[3] == username_or_email and check_password_hash(user_info[1], password)):  # email
                 payload = {
                     'id': user_info[2],
                     'exp': datetime.utcnow() + timedelta(seconds=JWT_EXP_DELTA_SECONDS)
