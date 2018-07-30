@@ -34,7 +34,7 @@ class Rides(DatabaseConnection):
         """ Returns a list of all ride offers available """
 
         sql = "SELECT origin, meet_point, contribution, free_spots, " \
-              "start_date, finish_date, id FROM carpool_rides"
+              "start_date, finish_date, id, destination FROM carpool_rides"
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
 
@@ -48,6 +48,7 @@ class Rides(DatabaseConnection):
             ride_info_dict['start_date'] = ride[4]
             ride_info_dict['finish_date'] = ride[5]
             ride_info_dict['ride_id'] = ride[6]
+            ride_info_dict['destination'] = ride[7]
 
             rides_list.append(ride_info_dict)
         return jsonify({"Rides": rides_list}), 200
@@ -99,7 +100,7 @@ class Rides(DatabaseConnection):
         """
 
         sql = "SELECT origin, meet_point, contribution, free_spots, start_date, " \
-              "finish_date, driver_id FROM carpool_rides WHERE id=%s" % ride_id
+              "finish_date, driver_id, destination FROM carpool_rides WHERE id=%s" % ride_id
 
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
@@ -121,6 +122,7 @@ class Rides(DatabaseConnection):
             ride_info_detail['free_spots'] = info[3]
             ride_info_detail['start_date'] = info[4]
             ride_info_detail['finish_date'] = info[5]
+            ride_info_detail['destination'] = info[7]
 
         return jsonify({"Ride details": ride_info_detail})
 
