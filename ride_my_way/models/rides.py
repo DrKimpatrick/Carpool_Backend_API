@@ -79,6 +79,40 @@ class Rides(DatabaseConnection):
             rides_list.append(ride_info)
         return rides_list
 
+    def rides_taken(self, passenger_id):
+        """ Returns a list of rides given by the User(Driver)"""
+        try:
+            sql = "SELECT ride_id FROM carpool_ride_request WHERE passenger_id={} AND accepted='accepted'".format(passenger_id)
+            self.cursor.execute(sql)
+            all_ride_ids = self.cursor.fetchall()
+        except:
+            return jsonify({"message": "Some thing went wrong"}), 500
+
+        try:
+            sql = "SELECT origin, meet_point, contribution, free_spots, " \
+                  "start_date, finish_date, id, destination FROM carpool_rides "
+            self.cursor.execute(sql)
+            result = self.cursor.fetchall()
+        except:
+            return jsonify({"message": "Some thing went wrong"}), 500
+
+        taken_rides_list = []
+        for ride in result:
+            for ride_id in all_ride_ids:
+                if ride[6] == ride_id[0]:
+                    taken_ride_info = {}
+                    taken_ride_info['origin'] = ride[0]
+                    taken_ride_info['meet_point'] = ride[1]
+                    taken_ride_info['contribution'] = ride[2]
+                    taken_ride_info['free_spots'] = ride[3]
+                    taken_ride_info['start_date'] = ride[4]
+                    taken_ride_info['finish_date'] = ride[5]
+                    taken_ride_info['ride_id'] = ride[6]
+                    taken_ride_info['destination'] = ride[7]
+
+                    taken_rides_list.append(taken_ride_info)
+        return taken_rides_list
+
     def get_user_info(self, user_id):
         """ Gets the info of the user with the user_id provided"""
 

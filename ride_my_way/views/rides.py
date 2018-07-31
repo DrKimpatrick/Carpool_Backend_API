@@ -51,6 +51,14 @@ def driver_rides(current_user):
     return jsonify({"{}'s ride offers".format(current_user[2]): result})
 
 
+@app.route('/api/v1/this/user/rides/taken', methods=['GET'])
+@token_required
+def driver_rides_taken(current_user):
+    """ Retrieves all ride offers taken by the current user """
+    result = database_connection.rides_taken(current_user[0])
+    return jsonify({"Rides taken by {}".format(current_user[2]): result})
+
+
 @app.route('/api/v1/rides/<ride_id>', methods=['GET'])
 @token_required
 def get_single_ride(current_user, ride_id):
