@@ -57,7 +57,7 @@ class Rides(DatabaseConnection):
         """ Returns a list of rides given by the User(Driver)"""
         try:
             sql = "SELECT origin, meet_point, contribution, free_spots, " \
-                  "start_date, finish_date, id FROM carpool_rides WHERE " \
+                  "start_date, finish_date, id, destination FROM carpool_rides WHERE " \
                   "driver_id=%s" % driver_id
             self.cursor.execute(sql)
             result = self.cursor.fetchall()
@@ -74,6 +74,7 @@ class Rides(DatabaseConnection):
             ride_info['start_date'] = ride[4]
             ride_info['finish_date'] = ride[5]
             ride_info['ride_id'] = ride[6]
+            ride_info['destination'] = ride[7]
 
             rides_list.append(ride_info)
         return rides_list

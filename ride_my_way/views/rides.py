@@ -46,7 +46,7 @@ def available_ride(current_user):
 @app.route('/api/v1/this/user/rides', methods=['GET'])
 @token_required
 def driver_rides(current_user):
-    """ Retrieves all the available ride offers """
+    """ Retrieves all ride offers for the current user """
     result = database_connection.rides_given(current_user[0])
     return jsonify({"{}'s ride offers".format(current_user[2]): result})
 
