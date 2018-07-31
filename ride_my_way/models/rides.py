@@ -81,7 +81,7 @@ class Rides(DatabaseConnection):
     def get_user_info(self, user_id):
         """ Gets the info of the user with the user_id provided"""
 
-        sql = "SELECT username, phone_number, gender " \
+        sql = "SELECT username, phone_number, gender, email " \
               "FROM carpool_users WHERE id=%s" % user_id
 
         self.cursor.execute(sql)
@@ -92,6 +92,7 @@ class Rides(DatabaseConnection):
             user['username'] = user_info[0]
             user['gender'] = user_info[2]
             user['phone number'] = user_info[1]
+            user['email'] = user_info[3]
         return user
 
     def ride_details(self, ride_id):

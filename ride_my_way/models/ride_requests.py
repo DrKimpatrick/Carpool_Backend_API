@@ -185,4 +185,4 @@ class RideRequests(DatabaseConnection):
 
         return jsonify(
             {"message":
-             "You have successfully deleted a ride request with request_id {}".format(request_id)})
+             "You have successfully deleted a ride request with request_id {}".format(request_id)}), 200
