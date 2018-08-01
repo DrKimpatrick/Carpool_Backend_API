@@ -21,7 +21,7 @@ class Users(DatabaseConnection):
             to ensure username and phone_number are unique
         """
 
-        select_query = "SELECT username, email, phone_number FROM carpool_users"
+        select_query = "SELECT username, email, phone_number, id FROM carpool_users"
         self.cursor.execute(select_query)
         row = self.cursor.fetchall()
         for result in row:
@@ -56,17 +56,46 @@ class Users(DatabaseConnection):
             return jsonify({"message": "{}".format(str(err))}), 406
         return jsonify({"message": "Account successfully created"}), 201
 
+    def let_them_be__unique(self,
+                            username,
+                            email,
+                            phone_number,
+                            current_user_id
+                            ):
+        """ Is a helper function that is called by other functions
+            to ensure username and phone_number are unique
+        """
+
+        select_query = "SELECT username, email, phone_number, id FROM carpool_users"
+        self.cursor.execute(select_query)
+        row = self.cursor.fetchall()
+        for result in row:
+            if result[0] == username and result[3] != current_user_id:
+                return jsonify(
+                    {"message": "Username already taken, try another"}), 406
+            if result[1] == email and result[3] != current_user_id:
+                return jsonify(
+                    {"message": "User account with that email already exists"}), 406
+            if result[2] == phone_number and result[3] != current_user_id:
+                return jsonify(
+                    {"message": "User account with that phone number already exists"}), 406
+
     def edit_user_profile(self, edit_user_dict):
+        """(edit_user_dict['email'], edit_user_dict['name'],
+                   edit_user_dict['username'], edit_user_dict['phone_number'], edit_user_dict['bio'],
+                      edit_user_dict['gender'], edit_user_dict['user_id'])"""
         # Check if username, email and phone_number don't exist
-        if self.should_be_unique(edit_user_dict['username'], edit_user_dict['email'], edit_user_dict['phone_number']):
-            return self.should_be_unique(edit_user_dict['username'], edit_user_dict['email'], edit_user_dict['phone_number'])
+        if self.let_them_be__unique(edit_user_dict['username'], edit_user_dict['email'], edit_user_dict['phone_number'], edit_user_dict['user_id']):
+            return self.let_them_be__unique(edit_user_dict['username'], edit_user_dict['email'], edit_user_dict['phone_number'], edit_user_dict['user_id'])
 
         # inserting user info into the carpool_users table
         try:
-            sql = "UPDATE carpool_users SET name={} email={}, username={}, " \
-                  "phone_number={}, bio={}, gender={} WHERE id={}".format(edit_user_dict['name'], edit_user_dict['email'],
-                   edit_user_dict['username'], edit_user_dict['phone_number'], edit_user_dict['bio'],
-                      edit_user_dict['gender'], edit_user_dict['user_id'])
+            sql = """UPDATE carpool_users SET email='{}',name='{}', username='{}', 
+                  phone_number='{}', bio='{}', gender='{}' WHERE id={}"""\
+                .format(edit_user_dict['email'], edit_user_dict['name'],
+                        edit_user_dict['username'], edit_user_dict['phone_number'],
+                        edit_user_dict['bio'], edit_user_dict['gender'],
+                        edit_user_dict['user_id'])
             self.cursor.execute(sql)
         except Exception as err:
             return jsonify({"message": "{}".format(str(err))}), 406
