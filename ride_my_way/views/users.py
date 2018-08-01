@@ -53,7 +53,7 @@ def login():
         else:
             username_or_email += request.json['email']
     else:
-        return jsonify({"message": "some thing went wrong"})
+        return jsonify({"message": "some thing went wrong"}), 400
 
     password = request.json['password']
 
