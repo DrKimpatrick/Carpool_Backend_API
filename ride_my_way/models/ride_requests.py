@@ -96,16 +96,16 @@ class RideRequests(DatabaseConnection):
         requests_list = []
         for r_request in result:
             request_info = {}
-            request_info['request id'] = r_request[0]
-            request_info['request status'] = r_request[2]
+            request_info['request_id'] = r_request[0]
+            request_info['request_status'] = r_request[2]
 
             # getting the passenger information
             passenger_id = r_request[1]
             passenger_info = self.get_user_info(passenger_id)
-            request_info['passenger details'] = passenger_info
+            request_info['passenger_details'] = passenger_info
             requests_list.append(request_info)
 
-        return jsonify({"Ride requests": requests_list}), 200
+        return jsonify({"Ride_requests": requests_list}), 200
 
     def respond_to_request(self,
                            current_user,

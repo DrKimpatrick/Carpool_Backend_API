@@ -975,7 +975,7 @@ class TestRideMyWay(unittest.TestCase):
                                 headers={'Authorization': self.token},
                                 content_type=content_type)
         # self.assertEqual(response_400.status_code, 400)
-        self.assertEqual(len(response.json['Ride requests']), 1)
+        self.assertEqual(len(response.json['Ride_requests']), 1)
 
         # supply right information
         response = self.app.get('{}users/rides/2/requests'.format(BASE_URL),
