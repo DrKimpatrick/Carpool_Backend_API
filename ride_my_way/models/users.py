@@ -56,6 +56,22 @@ class Users(DatabaseConnection):
             return jsonify({"message": "{}".format(str(err))}), 406
         return jsonify({"message": "Account successfully created"}), 201
 
+    def edit_user_profile(self, edit_user_dict):
+        # Check if username, email and phone_number don't exist
+        if self.should_be_unique(edit_user_dict['username'], edit_user_dict['email'], edit_user_dict['phone_number']):
+            return self.should_be_unique(edit_user_dict['username'], edit_user_dict['email'], edit_user_dict['phone_number'])
+
+        # inserting user info into the carpool_users table
+        try:
+            sql = "UPDATE carpool_users SET name={} email={}, username={}, " \
+                  "phone_number={}, bio={}, gender={} WHERE id={}".format(edit_user_dict['name'], edit_user_dict['email'],
+                   edit_user_dict['username'], edit_user_dict['phone_number'], edit_user_dict['bio'],
+                      edit_user_dict['gender'], edit_user_dict['user_id'])
+            self.cursor.execute(sql)
+        except Exception as err:
+            return jsonify({"message": "{}".format(str(err))}), 406
+        return jsonify({"message": "Account successfully updated"}), 201
+
     def sign_in(self, username_or_email, password):
         """ A sign a web token to current user if username and password match
             sign in with a username or email
@@ -108,7 +124,7 @@ class Users(DatabaseConnection):
     def get_user_info_users(self, user_id):
         """ Gets the info of the user with the user_id provided"""
 
-        sql = "SELECT username, phone_number, gender, email, bio " \
+        sql = "SELECT username, phone_number, gender, email, bio, name " \
               "FROM carpool_users WHERE id=%s" % user_id
 
         self.cursor.execute(sql)
@@ -121,5 +137,6 @@ class Users(DatabaseConnection):
             user['gender'] = user_info[2]
             user['email'] = user_info[3]
             user['bio'] = user_info[4]
+            user['name'] = user_info[5]
 
         return jsonify({"User_info": user})

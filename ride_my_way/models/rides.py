@@ -126,7 +126,7 @@ class Rides(DatabaseConnection):
         for user_info in result:
             user['username'] = user_info[0]
             user['gender'] = user_info[2]
-            user['phone number'] = user_info[1]
+            user['phone_number'] = user_info[1]
             user['email'] = user_info[3]
         return user
 
