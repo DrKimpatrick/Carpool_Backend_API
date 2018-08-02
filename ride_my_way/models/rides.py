@@ -136,7 +136,7 @@ class Rides(DatabaseConnection):
         """
 
         sql = "SELECT origin, meet_point, contribution, free_spots, start_date, " \
-              "finish_date, driver_id, destination FROM carpool_rides WHERE id=%s" % ride_id
+              "finish_date, driver_id, destination, terms FROM carpool_rides WHERE id=%s" % ride_id
 
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
@@ -159,6 +159,7 @@ class Rides(DatabaseConnection):
             ride_info_detail['start_date'] = info[4]
             ride_info_detail['finish_date'] = info[5]
             ride_info_detail['destination'] = info[7]
+            ride_info_detail['terms'] = info[8]
 
         return jsonify({"Ride details": ride_info_detail})
 
@@ -190,7 +191,7 @@ class Rides(DatabaseConnection):
 
         return jsonify(
             {"message":
-             "You have successfully deleted a ride with ride_id {}".format(ride_id)})
+             "You have successfully deleted a ride with ride_id {}".format(ride_id)}), 200
 
     # edit_ride = {}
     def edit_ride(self, edit_ride):
@@ -231,3 +232,27 @@ class Rides(DatabaseConnection):
             {"message":
              "You have successfully edited a ride with ride_id {}".format(edit_ride['ride_id'])})
 
+"""    def edit_ride(self, ride_info):
+         Creates ride offer in the database
+            The driver_id which is a foreign key is gotten from
+            the current_user instance in the token_required()
+            decorator as id
+        
+        try:
+            sql = "UPDATE carpool_rides SET " \
+                  "origin='{}', " \
+                  "meet_point='{}', " \
+                  "contribution='{}', " \
+                  "free_spots='{}', start_date='{}', " \
+                  "finish_date='{}', destination='{}', terms='{}' " \
+                  "WHERE id={} AND driver_id={}"\
+                .format((ride_info['origin'],
+                 ride_info['meet_point'], ride_info['contribution'],
+                 ride_info['free_spots'], ride_info['start_date'],
+                 ride_info['finish_date'], ride_info['destination'],
+                 ride_info['terms'], ride_info['ride_id'],ride_info['driver_id']))
+
+            self.cursor.execute(sql)
+        except psycopg2.Error as err:
+            return str(err)
+        return jsonify({"message": "Ride create updated !"}), 201"""

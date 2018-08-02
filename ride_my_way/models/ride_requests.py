@@ -186,3 +186,45 @@ class RideRequests(DatabaseConnection):
         return jsonify(
             {"message":
              "You have successfully deleted a ride request with request_id {}".format(request_id)}), 200
+
+    def show_all_my_requests(self, current_user):
+        """ Driver accepts or rejects a ride request in reaction to a request """
+
+        try:
+            # check for the presence of that ride id
+            sql = "SELECT id, ride_id, accepted FROM carpool_ride_request WHERE passenger_id={}" \
+                .format(current_user)
+            self.cursor.execute(sql)
+            result = self.cursor.fetchall()
+        except psycopg2.Error as err:
+            return jsonify({"message": str(err)}), 500
+
+        if not result:
+            return jsonify({"message": "You have not made any ride requests"}), 404
+
+        request_list = []
+        for request_info in result:
+            req_info = {}
+            req_info['request_id'] = request_info[0]
+            req_info['ride_id'] = request_info[1]
+            req_info['request_status'] = request_info[2]
+
+            try:
+                sql = "SELECT origin, destination, meet_point, contribution, start_date, " \
+                      "finish_date FROM carpool_rides WHERE id={}".format(request_info[1])
+
+                self.cursor.execute(sql)
+                ride_result = self.cursor.fetchone()
+            except psycopg2.Error as err:
+                return jsonify({"message": str(err)}), 500
+
+            req_info['origin'] = ride_result[0]
+            req_info['destination'] = ride_result[1]
+            req_info['meet_point'] = ride_result[2]
+            req_info['contribution'] = ride_result[3]
+            req_info['start_date'] = ride_result[4]
+            req_info['finish_date'] = ride_result[5]
+
+            request_list.append(req_info)
+
+        return jsonify({"Ride_requests": request_list}), 200

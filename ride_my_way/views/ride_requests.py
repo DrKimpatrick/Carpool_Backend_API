@@ -80,3 +80,13 @@ def cancel_request(current_user, request_id):
     result = database_connection.delete_request(current_user[0], request_id)
     return result
 
+
+@app.route('/api/v1/user/requests', methods=['GET'])
+@token_required
+def display_requests(current_user):
+    """ Display a list of all ride requests made by the current user """
+    #
+    result = database_connection.show_all_my_requests(current_user[0])
+    return result
+
+

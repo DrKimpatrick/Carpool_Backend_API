@@ -35,6 +35,43 @@ def create_ride(current_user):
     return result
 
 
+"""@app.route('/api/v1/users/rides/<ride_id>', methods=['PUT'])
+@token_required
+def edit_ride_offer(current_user, ride_id):
+     Editing a ride offer 
+    try:
+        ride_id = int(ride_id)
+    except:
+        return jsonify({"message": "Input should be integer"}), 400
+
+    if not isinstance(ride_id, int):
+        return jsonify({"message": "Input should integer"}), 400
+
+    # check that there are no missed out info or used wrong keys
+    if check_ride_fields():
+        return check_ride_fields()
+
+    # keep all the ride fields in a dictionary
+    ride_fields = generate_ride_field_dict()
+
+    # Checking for errors linked to the input type
+    if check_ride_field_type(ride_fields):
+        return check_ride_field_type(ride_fields)
+
+    ride_info = {"driver_id": current_user[0],
+                 "ride_id": ride_id,
+                 "origin": ride_fields['origin'],
+                 "meet_point": ride_fields['meet_point'],
+                 "contribution": ride_fields['contribution'],
+                 "free_spots": ride_fields['free_spots'],
+                 "start_date": ride_fields['start_date'],
+                 "finish_date": ride_fields['finish_date'],
+                 "destination": ride_fields['destination'],
+                 "terms": ride_fields['terms']}
+    result = database_connection.edit_ride(ride_info)
+    return result
+"""
+
 @app.route('/api/v1/rides', methods=['GET'])
 @token_required
 def available_ride(current_user):
@@ -54,7 +91,7 @@ def driver_rides(current_user):
 @app.route('/api/v1/this/user/rides/taken', methods=['GET'])
 @token_required
 def driver_rides_taken(current_user):
-    """ Retrieves all ride offers taken by the current user """
+    """ Retrieves all ride offers  the current user """
     result = database_connection.rides_taken(current_user[0])
     return jsonify({"Rides taken by {}".format(current_user[2]): result})
 
@@ -95,7 +132,15 @@ def delete_ride_offer(current_user, ride_id):
 @app.route('/api/v1/users/rides/<ride_id>/edit', methods=['PUT'])
 @token_required
 def edit_ride_offer(current_user, ride_id):
-    """ Deletes the ride with id provided """
+    """ Update the ride with id provided """
+
+    try:
+        ride_id = int(ride_id)
+    except:
+        return jsonify({"message": "Input should be integer"}), 400
+
+    if not isinstance(ride_id, int):
+        return jsonify({"message": "Input should integer"}), 400
 
     # check that there are no missed out info or used wrong keys
     if check_ride_fields():
