@@ -16,14 +16,15 @@ class Rides(DatabaseConnection):
                   "meet_point, " \
                   "contribution, " \
                   "free_spots, start_date, " \
-                  "finish_date) " \
-                  "VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                  "finish_date, destination, terms) " \
+                  "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
             self.cursor.execute(
                 sql,
                 (new_ride['driver_id'], new_ride['origin'],
                  new_ride['meet_point'], new_ride['contribution'],
                  new_ride['free_spots'], new_ride['start_date'],
-                 new_ride['finish_date'])
+                 new_ride['finish_date'], new_ride['destination'],
+                 new_ride['terms'])
             )
         except psycopg2.Error as err:
             return str(err)
@@ -33,7 +34,7 @@ class Rides(DatabaseConnection):
         """ Returns a list of all ride offers available """
 
         sql = "SELECT origin, meet_point, contribution, free_spots, " \
-              "start_date, finish_date, id FROM carpool_rides"
+              "start_date, finish_date, id, destination FROM carpool_rides"
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
 
@@ -47,6 +48,7 @@ class Rides(DatabaseConnection):
             ride_info_dict['start_date'] = ride[4]
             ride_info_dict['finish_date'] = ride[5]
             ride_info_dict['ride_id'] = ride[6]
+            ride_info_dict['destination'] = ride[7]
 
             rides_list.append(ride_info_dict)
         return jsonify({"Rides": rides_list}), 200
@@ -55,7 +57,7 @@ class Rides(DatabaseConnection):
         """ Returns a list of rides given by the User(Driver)"""
         try:
             sql = "SELECT origin, meet_point, contribution, free_spots, " \
-                  "start_date, finish_date, id FROM carpool_rides WHERE " \
+                  "start_date, finish_date, id, destination FROM carpool_rides WHERE " \
                   "driver_id=%s" % driver_id
             self.cursor.execute(sql)
             result = self.cursor.fetchall()
@@ -72,14 +74,49 @@ class Rides(DatabaseConnection):
             ride_info['start_date'] = ride[4]
             ride_info['finish_date'] = ride[5]
             ride_info['ride_id'] = ride[6]
+            ride_info['destination'] = ride[7]
 
             rides_list.append(ride_info)
         return rides_list
 
+    def rides_taken(self, passenger_id):
+        """ Returns a list of rides given by the User(Driver)"""
+        try:
+            sql = "SELECT ride_id FROM carpool_ride_request WHERE passenger_id={} AND accepted='accepted'".format(passenger_id)
+            self.cursor.execute(sql)
+            all_ride_ids = self.cursor.fetchall()
+        except:
+            return jsonify({"message": "Some thing went wrong"}), 500
+
+        try:
+            sql = "SELECT origin, meet_point, contribution, free_spots, " \
+                  "start_date, finish_date, id, destination FROM carpool_rides "
+            self.cursor.execute(sql)
+            result = self.cursor.fetchall()
+        except:
+            return jsonify({"message": "Some thing went wrong"}), 500
+
+        taken_rides_list = []
+        for ride in result:
+            for ride_id in all_ride_ids:
+                if ride[6] == ride_id[0]:
+                    taken_ride_info = {}
+                    taken_ride_info['origin'] = ride[0]
+                    taken_ride_info['meet_point'] = ride[1]
+                    taken_ride_info['contribution'] = ride[2]
+                    taken_ride_info['free_spots'] = ride[3]
+                    taken_ride_info['start_date'] = ride[4]
+                    taken_ride_info['finish_date'] = ride[5]
+                    taken_ride_info['ride_id'] = ride[6]
+                    taken_ride_info['destination'] = ride[7]
+
+                    taken_rides_list.append(taken_ride_info)
+        return taken_rides_list
+
     def get_user_info(self, user_id):
         """ Gets the info of the user with the user_id provided"""
 
-        sql = "SELECT username, phone_number, gender " \
+        sql = "SELECT username, phone_number, gender, email " \
               "FROM carpool_users WHERE id=%s" % user_id
 
         self.cursor.execute(sql)
@@ -89,7 +126,8 @@ class Rides(DatabaseConnection):
         for user_info in result:
             user['username'] = user_info[0]
             user['gender'] = user_info[2]
-            user['phone number'] = user_info[1]
+            user['phone_number'] = user_info[1]
+            user['email'] = user_info[3]
         return user
 
     def ride_details(self, ride_id):
@@ -98,7 +136,7 @@ class Rides(DatabaseConnection):
         """
 
         sql = "SELECT origin, meet_point, contribution, free_spots, start_date, " \
-              "finish_date, driver_id FROM carpool_rides WHERE id=%s" % ride_id
+              "finish_date, driver_id, destination, terms FROM carpool_rides WHERE id=%s" % ride_id
 
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
@@ -120,6 +158,8 @@ class Rides(DatabaseConnection):
             ride_info_detail['free_spots'] = info[3]
             ride_info_detail['start_date'] = info[4]
             ride_info_detail['finish_date'] = info[5]
+            ride_info_detail['destination'] = info[7]
+            ride_info_detail['terms'] = info[8]
 
         return jsonify({"Ride details": ride_info_detail})
 
@@ -151,7 +191,7 @@ class Rides(DatabaseConnection):
 
         return jsonify(
             {"message":
-             "You have successfully deleted a ride with ride_id {}".format(ride_id)})
+             "You have successfully deleted a ride with ride_id {}".format(ride_id)}), 200
 
     # edit_ride = {}
     def edit_ride(self, edit_ride):
@@ -192,3 +232,27 @@ class Rides(DatabaseConnection):
             {"message":
              "You have successfully edited a ride with ride_id {}".format(edit_ride['ride_id'])})
 
+"""    def edit_ride(self, ride_info):
+         Creates ride offer in the database
+            The driver_id which is a foreign key is gotten from
+            the current_user instance in the token_required()
+            decorator as id
+        
+        try:
+            sql = "UPDATE carpool_rides SET " \
+                  "origin='{}', " \
+                  "meet_point='{}', " \
+                  "contribution='{}', " \
+                  "free_spots='{}', start_date='{}', " \
+                  "finish_date='{}', destination='{}', terms='{}' " \
+                  "WHERE id={} AND driver_id={}"\
+                .format((ride_info['origin'],
+                 ride_info['meet_point'], ride_info['contribution'],
+                 ride_info['free_spots'], ride_info['start_date'],
+                 ride_info['finish_date'], ride_info['destination'],
+                 ride_info['terms'], ride_info['ride_id'],ride_info['driver_id']))
+
+            self.cursor.execute(sql)
+        except psycopg2.Error as err:
+            return str(err)
+        return jsonify({"message": "Ride create updated !"}), 201"""

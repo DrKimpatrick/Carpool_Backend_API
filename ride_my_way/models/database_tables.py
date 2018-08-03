@@ -24,6 +24,7 @@ tables_list = [
                          driver_id INTEGER NOT NULL ,
                          FOREIGN KEY(driver_id) REFERENCES carpool_users(id) ON DELETE CASCADE,
                          origin VARCHAR (100) NOT NULL ,
+                         destination VARCHAR (100) NOT NULL ,
                          meet_point VARCHAR NOT NULL ,
                          contribution INTEGER DEFAULT 0,
                          free_spots INTEGER NOT NULL ,
