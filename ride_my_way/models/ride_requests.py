@@ -211,7 +211,7 @@ class RideRequests(DatabaseConnection):
 
             try:
                 sql = "SELECT origin, destination, meet_point, contribution, start_date, " \
-                      "finish_date FROM carpool_rides WHERE id={}".format(request_info[1])
+                      "finish_date , driver_id FROM carpool_rides WHERE id={}".format(request_info[1])
 
                 self.cursor.execute(sql)
                 ride_result = self.cursor.fetchone()
@@ -224,6 +224,15 @@ class RideRequests(DatabaseConnection):
             req_info['contribution'] = ride_result[3]
             req_info['start_date'] = ride_result[4]
             req_info['finish_date'] = ride_result[5]
+            req_info['driver_id'] = ride_result[6]
+
+            try:
+                sql = "SELECT username FROM carpool_users WHERE id={}".format(ride_result[6])
+                self.cursor.execute(sql)
+                user_result = self.cursor.fetchone()
+            except psycopg2.Error as err:
+                return jsonify({"message": str(err)}), 500
+            req_info['username'] = user_result[0]
 
             request_list.append(req_info)
 
