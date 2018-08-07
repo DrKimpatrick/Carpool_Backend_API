@@ -23,7 +23,7 @@ class DatabaseConnection(object):
         if os.getenv('APP_SETTINGS') == "testing":
             self.dbname = "test_db"
         else:
-            self.dbname = "Ride_my_way"
+            self.dbname = "ride_my_way"
 
         try:
             # establishing a server connection
