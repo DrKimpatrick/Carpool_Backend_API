@@ -22,23 +22,42 @@ class DatabaseConnection(object):
         """ Initialising a database connection """
         if os.getenv('APP_SETTINGS') == "testing":
             self.dbname = "test_db"
-        else:
+        elif os.getenv('APP_SETTINGS') == 'development':
             self.dbname = "ride_my_way"
+        else:
+            self.dbname = 'dc3n9hdb7ngcus'
 
-        try:
-            # establishing a server connection
-            self.connection = psycopg2.connect(dbname="{}".format(self.dbname),
-                                               user="postgres",
-                                               password="Kp15712Kp",
-                                               host="localhost"
-                                               )
-            self.connection.autocommit = True
+        if os.getenv('APP_SETTINGS') == 'testing' or os.getenv('APP_SETTINGS') == 'development':
 
-            # activate connection cursor
-            self.cursor = self.connection.cursor()
-        except psycopg2.Error as err:
-            # bug in returning under the __init__
-            print("Can not establish a database connection")
+            try:
+                # establishing a server connection
+                self.connection = psycopg2.connect(dbname="{}".format(self.dbname),
+                                                user="postgres",
+                                                password="Kp15712Kp",
+                                                host="localhost"
+                                                )
+                self.connection.autocommit = True
+
+                # activate connection cursor
+                self.cursor = self.connection.cursor()
+            except psycopg2.Error as err:
+                # bug in returning under the __init__
+                print("Can not establish a database connection")
+        else:
+            try:
+                # establishing a server connection
+                self.connection = psycopg2.connect(dbname="{}".format(self.dbname),
+                                                user="hiyjfbbmaysfxe",
+                                                password="629bd500da19e2929cb8b5bf5a975497776acdb19129036f91c19291bf614e0c",
+                                                host="locaec2-54-225-249-161.compute-1.amazonaws.comlhost"
+                                                )
+                self.connection.autocommit = True
+
+                # activate connection cursor
+                self.cursor = self.connection.cursor()
+            except psycopg2.Error as err:
+                # bug in returning under the __init__
+                print("Can not establish a database connection")
 
     def create_tables(self):
         """ Create database tables from the database_tables.py file """
