@@ -23,7 +23,7 @@ and agrees to all the conditions specified (price and general behavior).
 
 **Features**
 
-    - Register a user
+     - Register a user
     - Login a user 
     - Fetch all available rides 
     - Fetch the details of a single ride
@@ -31,6 +31,10 @@ and agrees to all the conditions specified (price and general behavior).
     - Create a ride offer 
     - Fetch all ride requests
     - Get rides for the current user
+    - Delete a ride offer
+    - Cancel a ride request
+    - Edit user profile
+    - Edit ride offer
 **API end points**
 
 - POST api/v1/auth/signup (create account) 
