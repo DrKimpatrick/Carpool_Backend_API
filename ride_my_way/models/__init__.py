@@ -49,7 +49,7 @@ class DatabaseConnection(object):
                 self.connection = psycopg2.connect(dbname="{}".format(self.dbname),
                                                 user="hiyjfbbmaysfxe",
                                                 password="629bd500da19e2929cb8b5bf5a975497776acdb19129036f91c19291bf614e0c",
-                                                host="locaec2-54-225-249-161.compute-1.amazonaws.comlhost"
+                                                host="ec2-54-225-249-161.compute-1.amazonaws.com"
                                                 )
                 self.connection.autocommit = True
 
