@@ -63,7 +63,7 @@ Below are the things you need to get the project up and running.
 
 Type: 
         
-       "https://github.com/DrKimpatrick/Andela_bootcamp_week_2.git"
+       "https://github.com/DrKimpatrick/Carpool_Backend_API.git"
   in the terminal or git bash or command prompt.
 
 To install the requirements. run:
