@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/DrKimpatrick/Andela_bootcamp_week_2.svg?branch=master)](https://travis-ci.org/DrKimpatrick/Andela_bootcamp_week_2)
-[![Coverage Status](https://coveralls.io/repos/github/DrKimpatrick/Andela_bootcamp_week_2/badge.svg?branch=master)](https://coveralls.io/github/DrKimpatrick/Andela_bootcamp_week_2?branch=master)
-[![Maintainability](https://api.codeclimate.com/v1/badges/70062b7c4a5089d378a7/maintainability)](https://codeclimate.com/github/DrKimpatrick/Andela_bootcamp_week_2/maintainability)
+[![Build Status](https://travis-ci.org/DrKimpatrick/Carpool_Backend_API.svg?branch=master)](https://travis-ci.org/DrKimpatrick/Carpool_Backend_API)
+[![Coverage Status](https://coveralls.io/repos/github/DrKimpatrick/Carpool_Backend_API/badge.svg?branch=master)](https://coveralls.io/github/DrKimpatrick/Carpool_Backend_API?branch=master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/589baf6eb6c9145a5fc7/maintainability)](https://codeclimate.com/github/DrKimpatrick/Carpool_Backend_API/maintainability)
 
 # Ride-my-way (Carpool Andela Bootcamp 09 Project)
 
