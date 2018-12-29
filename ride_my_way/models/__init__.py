@@ -25,7 +25,7 @@ class DatabaseConnection(object):
         elif os.getenv('APP_SETTINGS') == 'development':
             self.dbname = "ride_my_way"
         else:
-            self.dbname = 'dc3n9hdb7ngcus'
+            self.dbname = 'd6g7fntask9htm'
 
         if os.getenv('APP_SETTINGS') == 'testing' or os.getenv('APP_SETTINGS') == 'development':
 
@@ -47,9 +47,9 @@ class DatabaseConnection(object):
             try:
                 # establishing a server connection
                 self.connection = psycopg2.connect(dbname="{}".format(self.dbname),
-                                                user="hiyjfbbmaysfxe",
-                                                password="629bd500da19e2929cb8b5bf5a975497776acdb19129036f91c19291bf614e0c",
-                                                host="ec2-54-225-249-161.compute-1.amazonaws.com"
+                                                user="axricsclwzoxhe",
+                                                password="309aafba6c49898c9f170995b274f449522c82d9c8f41bbc42e8238a24357c2a",
+                                                host="ec2-54-235-178-189.compute-1.amazonaws.com"
                                                 )
                 self.connection.autocommit = True
 
